@@ -82,4 +82,4 @@ Les modifications touchant à `functions.php`, au wizard, au panier ou aux permi
 
 ## Licence
 
-Ce dépôt est fourni à des fins d’audit et de poursuite du développement. Définissez explicitement la licence de distribution avant toute réutilisation commerciale ou contribution externe.
+Ce dépôt est distribué sous licence [MIT](LICENSE). Elle permet l’utilisation, la modification, la distribution et la commercialisation du code, sous réserve de conserver la notice de copyright et de licence.
