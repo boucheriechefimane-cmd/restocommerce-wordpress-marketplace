@@ -72,7 +72,7 @@ RC_VENDOR_USER="$RC_VENDOR_USER" RC_VENDOR_PASSWORD="$RC_VENDOR_PASSWORD" node s
 RC_VENDOR_USER="$RC_VENDOR_USER" RC_VENDOR_PASSWORD="$RC_VENDOR_PASSWORD" node scripts/inventory-vendor-assets.mjs
 ```
 
-Consultez [`docs/receipts/lot-2-report.md`](docs/receipts/lot-2-report.md) pour le périmètre et les résultats du Lot 2. L’optimisation 2.2.6 isole l’accueil vendeur des ressources publiques et WCFM inutiles ; sur la mesure mobile authentifiée de référence, le LCP passe de 4,1 s à 3,1 s.
+Consultez [`docs/CDC-MAITRE.md`](docs/CDC-MAITRE.md) pour les exigences, les lots et le protocole de validation ; [`docs/receipts/lot-2-report.md`](docs/receipts/lot-2-report.md) contient le périmètre et les résultats du Lot 2. L’optimisation 2.2.6 isole l’accueil vendeur des ressources publiques et WCFM inutiles ; sur la mesure mobile authentifiée de référence, le LCP passe de 4,1 s à 3,1 s.
 
 ## Sécurité et contribution
 
