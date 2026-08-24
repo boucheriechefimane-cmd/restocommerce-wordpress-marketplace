@@ -3,7 +3,7 @@
 **Date :** 24 août 2026  
 **Staging :** WordPress / WooCommerce / WCFM  
 **Thème actif contrôlé :** RestoCommerce **2.7.13**
-**Révision publique :** synchronisation GitHub à effectuer après l’audit sanitaire final ; aucun SHA distant non vérifié n’est déclaré dans ce rapport.
+**Révision GitHub de publication des recettes :** `29f0b864c16915b54b7fe50a73373545fa6480c8` sur `main`.
 
 ## Règle de lecture
 

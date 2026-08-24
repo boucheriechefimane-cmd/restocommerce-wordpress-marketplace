@@ -3,6 +3,7 @@
 **Date de recette :** 24 août 2026
 **Environnement :** staging WordPress / WooCommerce / WCFM
 **Thème contrôlé :** RestoCommerce **2.7.13**, confirmé après remplacement WordPress et purge LiteSpeed.
+**Révision GitHub de publication des recettes :** `29f0b864c16915b54b7fe50a73373545fa6480c8` sur `main`.
 
 ## Verdict
 
