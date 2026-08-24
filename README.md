@@ -59,17 +59,25 @@ Le serveur impose une photo avant publication d’un nouveau plat. Les groupes d
 
 ## Recette et audit
 
-Les scripts de recette nécessitent les variables `RC_VENDOR_USER` et `RC_VENDOR_PASSWORD` dans l’environnement local. Les rapports sont générés dans `docs/receipts/lot-2-artifacts/`, un dossier ignoré pour ne pas publier de traces de session.
+Les scripts de recette nécessitent les variables `RC_ORIGIN`, `RC_VENDOR_USER` et `RC_VENDOR_PASSWORD` dans l’environnement local. `RC_QA_OUT` est optionnelle : sans elle, chaque recette écrit dans son dossier `docs/receipts/*-artifacts/`, ignoré par Git pour ne pas publier de traces de session. Les trois moteurs Playwright sont des dépendances de développement explicites du projet.
 
 ```bash
 # Parcours Lot 2 : création réelle, groupe Sauce max 2, duplication, client, axe et Pixelmatch
-RC_VENDOR_USER="$RC_VENDOR_USER" RC_VENDOR_PASSWORD="$RC_VENDOR_PASSWORD" node scripts/run-lot-2-receipt.mjs
+RC_ORIGIN="https://staging.example" RC_VENDOR_USER="$RC_VENDOR_USER" RC_VENDOR_PASSWORD="$RC_VENDOR_PASSWORD" node scripts/run-lot-2-receipt.mjs
+
+# Parcours Lot 3 : boutique vierge, reprise serveur, premier plat, publication publique,
+# axe-core, clavier, multi-moteurs et nettoyage du seul vendeur de recette.
+RC_ORIGIN="https://staging.example" RC_VENDOR_USER="$RC_VENDOR_USER" RC_VENDOR_PASSWORD="$RC_VENDOR_PASSWORD" RC_QA_OUT="/tmp/restocommerce-lot3-proof" node scripts/run-lot-3-receipt.mjs
 
 # Lighthouse mobile : cockpit vendeur authentifié et fiche restaurant
-RC_VENDOR_USER="$RC_VENDOR_USER" RC_VENDOR_PASSWORD="$RC_VENDOR_PASSWORD" node scripts/run-lot-2-lighthouse.mjs
+RC_ORIGIN="https://staging.example" RC_VENDOR_USER="$RC_VENDOR_USER" RC_VENDOR_PASSWORD="$RC_VENDOR_PASSWORD" node scripts/run-lot-2-lighthouse.mjs
 
 # Inventaire des ressources réellement chargées dans le cockpit
-RC_VENDOR_USER="$RC_VENDOR_USER" RC_VENDOR_PASSWORD="$RC_VENDOR_PASSWORD" node scripts/inventory-vendor-assets.mjs
+RC_ORIGIN="https://staging.example" RC_VENDOR_USER="$RC_VENDOR_USER" RC_VENDOR_PASSWORD="$RC_VENDOR_PASSWORD" node scripts/inventory-vendor-assets.mjs
+
+# Régression de routes en lecture seule : marketplace, route canonique et legacy,
+# 404 éditoriale, produit, panier, commande et cockpit vendeur authentifié
+RC_ORIGIN="https://staging.example" RC_VENDOR_USER="$RC_VENDOR_USER" RC_VENDOR_PASSWORD="$RC_VENDOR_PASSWORD" RC_QA_OUT="/tmp/restocommerce-route-proof" pnpm qa:routes
 ```
 
 Consultez [`docs/CDC-MAITRE.md`](docs/CDC-MAITRE.md) pour les exigences, les lots et le protocole de validation ; [`docs/receipts/lot-2-report.md`](docs/receipts/lot-2-report.md) contient le périmètre et les résultats du Lot 2. L’optimisation 2.2.6 isole l’accueil vendeur des ressources publiques et WCFM inutiles ; sur la mesure mobile authentifiée de référence, le LCP passe de 4,1 s à 3,1 s.

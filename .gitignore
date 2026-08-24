@@ -116,7 +116,7 @@ client/public/__manus__/version.json
 
 # Generated test evidence and local WordPress packages
 .manus-logs/
-docs/receipts/lot-2-artifacts/
+docs/receipts/*-artifacts/
 wordpress-archives/
 wordpress-theme/**/*.zip
 wordpress-theme/**/uploads/

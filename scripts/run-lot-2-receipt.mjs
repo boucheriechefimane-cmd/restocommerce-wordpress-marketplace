@@ -5,11 +5,11 @@ import { PNG } from 'pngjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const origin = process.env.RC_ORIGIN || 'https://aliceblue-bison-433987.hostingersite.com';
+const origin = (process.env.RC_ORIGIN || 'https://aliceblue-bison-433987.hostingersite.com').replace(/\/$/, '');
 const username = process.env.RC_VENDOR_USER;
 const password = process.env.RC_VENDOR_PASSWORD;
 if (!username || !password) throw new Error('RC_VENDOR_USER et RC_VENDOR_PASSWORD sont requis pour la recette vendeur réelle.');
-const receiptRoot = '/home/ubuntu/resto-commerce-theme/docs/receipts/lot-2-artifacts';
+const receiptRoot = path.resolve(process.env.RC_QA_OUT || path.join(process.cwd(), 'docs', 'receipts', 'lot-2-artifacts'));
 const runId = `lot2-${Date.now()}`;
 const dishName = `Plat recette ${runId}`;
 const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9JfhYAAAAASUVORK5CYII=', 'base64');

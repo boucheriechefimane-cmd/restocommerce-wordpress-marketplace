@@ -2,7 +2,7 @@
 /**
  * Plugin Name: RestoCommerce WhatsApp Checkout
  * Description: Ajoute un moyen de commande WhatsApp à WooCommerce. À maintenir comme extension séparée du thème.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Requires at least: 6.5
  * Requires PHP: 8.1
  * Text Domain: restocommerce-whatsapp
@@ -81,9 +81,38 @@ function restocommerce_load_whatsapp_gateway() : void {
 }
 add_action( 'plugins_loaded', 'restocommerce_load_whatsapp_gateway', 20 );
 
-function restocommerce_order_whatsapp_number( WC_Order $order ) : string {
+function restocommerce_whatsapp_default_number() : string {
 	$settings = (array) get_option( 'woocommerce_restocommerce_whatsapp_settings', array() );
-	$number   = isset( $settings['whatsapp_number'] ) ? (string) $settings['whatsapp_number'] : '';
+	return preg_replace( '/[^0-9]/', '', (string) ( $settings['whatsapp_number'] ?? '' ) );
+}
+
+function restocommerce_vendor_whatsapp_number( int $vendor_id ) : string {
+	$profile = $vendor_id ? (array) get_user_meta( $vendor_id, 'wcfmmp_profile_settings', true ) : array();
+	$candidates = array(
+		$profile['whatsapp_number'] ?? '',
+		$profile['mobile'] ?? '',
+		$profile['phone'] ?? '',
+		$vendor_id ? get_user_meta( $vendor_id, 'restocommerce_whatsapp_number', true ) : '',
+		restocommerce_whatsapp_default_number(),
+	);
+
+	foreach ( $candidates as $candidate ) {
+		$sanitized = preg_replace( '/[^0-9]/', '', (string) $candidate );
+		if ( $sanitized ) {
+			return $sanitized;
+		}
+	}
+
+	return '';
+}
+
+function restocommerce_vendor_whatsapp_support_url( int $vendor_id, string $message ) : string {
+	$number = restocommerce_vendor_whatsapp_number( $vendor_id );
+	return $number ? 'https://wa.me/' . rawurlencode( $number ) . '?text=' . rawurlencode( $message ) : '';
+}
+
+function restocommerce_order_whatsapp_number( WC_Order $order ) : string {
+	$number = restocommerce_whatsapp_default_number();
 	/**
 	 * WCFM/Dokan : retourner ici le numéro du restaurant propriétaire de la sous-commande.
 	 * Le filtre évite de coupler ce plugin à un seul marketplace.
@@ -106,19 +135,9 @@ function restocommerce_wcfm_whatsapp_number( string $number, WC_Order $order ) :
 			continue;
 		}
 
-		$profile = (array) get_user_meta( $vendor_id, 'wcfmmp_profile_settings', true );
-		$candidates = array(
-			$profile['whatsapp_number'] ?? '',
-			$profile['mobile'] ?? '',
-			$profile['phone'] ?? '',
-			get_user_meta( $vendor_id, 'restocommerce_whatsapp_number', true ),
-		);
-
-		foreach ( $candidates as $candidate ) {
-			$sanitized = preg_replace( '/[^0-9]/', '', (string) $candidate );
-			if ( $sanitized ) {
-				return $sanitized;
-			}
+		$vendor_number = restocommerce_vendor_whatsapp_number( $vendor_id );
+		if ( $vendor_number ) {
+			return $vendor_number;
 		}
 	}
 

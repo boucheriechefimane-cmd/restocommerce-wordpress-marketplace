@@ -1,5 +1,5 @@
 /* Direction « Le Comptoir Éditorial » : dashboard vendeur autonome, calme et précis ; aucune dépendance visuelle au DOM WCFM. */
-:root{--rc-vendor-dark:#173f35;--rc-vendor-paper:#f7f3eb;--rc-vendor-cream:#fffaf0;--rc-vendor-clay:#d77757;--rc-vendor-clay-dark:#b85f42;--rc-vendor-line:rgba(23,63,53,.1);--rc-vendor-muted:rgba(23,63,53,.62);--rc-vendor-shadow:0 12px 32px rgba(23,63,53,.06)}
+:root{--rc-vendor-dark:#173f35;--rc-vendor-paper:#f7f3eb;--rc-vendor-cream:#fffaf0;--rc-vendor-clay:#d77757;--rc-vendor-clay-dark:#b85f42;--rc-vendor-line:rgba(23,63,53,.1);--rc-vendor-muted:#36544b;--rc-vendor-shadow:0 12px 32px rgba(23,63,53,.06)}
 .rc-vendor-app-body{margin:0!important;background:var(--rc-vendor-paper)!important;color:var(--rc-vendor-dark)!important;font-family:Manrope,Arial,sans-serif!important}
 .rc-vendor-app-body .rc-site-header,.rc-vendor-app-body .rc-site-footer,.rc-vendor-app-body .rc-cart-layer,.rc-vendor-app-body .rc-cart-drawer{display:none!important}
 .rc-vendor-app{display:flex;min-height:100dvh;background:var(--rc-vendor-paper);color:var(--rc-vendor-dark);font-family:Manrope,Arial,sans-serif}

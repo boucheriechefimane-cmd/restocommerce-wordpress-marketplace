@@ -4,7 +4,7 @@
  *
  * Plugin Name: RestoCommerce WCFM Bridge
  * Description: Expose les restaurants WCFM publiés à la home page RestoCommerce sans dépendance front-end lourde.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Requires at least: 6.5
  * Requires PHP: 8.1
  * Text Domain: restocommerce-wcfm-bridge
@@ -46,8 +46,8 @@ function restocommerce_wcfm_bridge_restaurants( array $restaurants ) : array {
 			continue;
 		}
 
-		$name = method_exists( $store, 'get_shop_name' ) ? $store->get_shop_name() : $vendor->display_name;
-		$url  = method_exists( $store, 'get_shop_url' ) ? $store->get_shop_url() : home_url( '/restaurant/' . $vendor->user_nicename . '/' );
+			$name = method_exists( $store, 'get_shop_name' ) ? $store->get_shop_name() : $vendor->display_name;
+			$url  = home_url( '/restaurant/' . rawurlencode( $vendor->user_nicename ?: $vendor->user_login ) . '/' );
 
 		$address = isset( $settings['address'] ) && is_array( $settings['address'] ) ? $settings['address'] : array();
 		$area    = isset( $address['city'] ) ? (string) $address['city'] : '';
@@ -82,12 +82,7 @@ function restocommerce_wcfm_bridge_purge_marketplace_cache( int $user_id ) : voi
 	if ( did_action( 'litespeed_purge_url' ) || has_action( 'litespeed_purge_url' ) ) {
 		do_action( 'litespeed_purge_url', home_url( '/' ) );
 
-		if ( function_exists( 'wcfmmp_get_store' ) ) {
-			$store = wcfmmp_get_store( $user_id );
-			if ( $store && method_exists( $store, 'get_shop_url' ) ) {
-				do_action( 'litespeed_purge_url', $store->get_shop_url() );
-			}
-		}
+		do_action( 'litespeed_purge_url', home_url( '/restaurant/' . rawurlencode( $user->user_nicename ?: $user->user_login ) . '/' ) );
 	}
 }
 

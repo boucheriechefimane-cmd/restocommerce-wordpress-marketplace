@@ -1,5 +1,10 @@
 # Mise à jour marketplace
 
+- [ ] Achever sans interruption les corrections, mesures et preuves des Lots 1 à 3 autorisés avant toute restitution finale, sans engager les Lots 4 à 12.
+- [ ] Lots 4 à 12 — Réaliser chaque lot suivant le CDC maître, dans l’ordre, après documentation de la preuve du lot précédent et sans suppression ni altération de données existantes.
+- [ ] Lots 4 à 12 — Déployer chaque correctif sur staging réel, exécuter les recettes multi-moteurs, accessibilité, performance et sécurité applicables, puis documenter tout écart résiduel.
+- [ ] Programme final — Réunir les rapports publics assainis et les références d’artefacts privés des Lots 1 à 12 avant la restitution unique demandée.
+
 - [x] Définir le contenu et les catégories de la page d’accueil marketplace.
 - [x] Construire la découverte des restaurants avec recherche et filtres.
 - [x] Ajouter des fiches restaurants et les liens vers la page de détail.
@@ -227,17 +232,49 @@
 
 > Validation utilisateur enregistrée : le Lot 1 est approuvé. Le Lot 2 est désormais le seul lot ouvert.
 
-- [ ] Lot 2 — Relire les exigences exactes du CDC maître pour l’assistant propriétaire de gestion produits.
-- [ ] Lot 2 — Auditer les données WooCommerce/WCFM et le parcours d’ajout produit existant sur le staging réel, sans utiliser le formulaire WCFM brut comme expérience cible.
-- [ ] Lot 2 — Concevoir et implémenter l’assistant mobile propriétaire : contenu, prix, photo, disponibilités, options et confirmation.
-- [ ] Lot 2 — Relier les actions de l’assistant aux données WooCommerce/WCFM réelles et garantir les droits vendeur.
-- [ ] Lot 2 — Déployer sur le staging réel, purger LiteSpeed et confirmer la version servie.
-- [ ] Lot 2 — Exécuter la recette sandbox complète, les actions vendeur réelles et le rapport de recette avant validation humaine.
-- [ ] Lot 2 — Construire l’assistant mobile de gestion produits après validation du Lot 1.
-- [ ] Lot 2 — Établir le profil détaillé du LCP du cockpit vendeur authentifié et isoler les ressources non critiques.
-- [ ] Lot 2 — Réduire sans régression les ressources publiques inutiles sur le cockpit vendeur, puis re-mesurer Lighthouse.
-- [ ] Lot 2 — Redéployer l’optimisation LCP, rejouer la recette complète et compléter le rapport avant validation humaine.
+- [x] Lot 2 — Relire les exigences exactes du CDC maître pour l’assistant propriétaire de gestion produits.
+- [x] Lot 2 — Auditer les données WooCommerce/WCFM et le parcours d’ajout produit existant sur le staging réel, sans utiliser le formulaire WCFM brut comme expérience cible.
+- [x] Lot 2 — Concevoir et implémenter l’assistant mobile propriétaire : contenu, prix, photo, disponibilités, options et confirmation.
+- [x] Lot 2 — Relier les actions de l’assistant aux données WooCommerce/WCFM réelles et garantir les droits vendeur.
+- [x] Lot 2 — Déployer sur le staging réel, purger LiteSpeed et confirmer la version servie.
+- [x] Lot 2 — Exécuter la recette sandbox complète, les actions vendeur réelles et le rapport de recette avant validation humaine.
+- [x] Lot 2 — Construire l’assistant mobile de gestion produits après validation du Lot 1.
+- [x] Lot 2 — Établir le profil détaillé du LCP du cockpit vendeur authentifié et isoler les ressources non critiques.
+- [x] Lot 2 — Réduire sans régression les ressources publiques inutiles sur le cockpit vendeur, puis re-mesurer Lighthouse.
+- [x] Lot 2 — Redéployer l’optimisation LCP, rejouer la recette complète et compléter le rapport avant validation humaine.
+
+> Validation utilisateur enregistrée : le Lot 2 est approuvé. Le Lot 3 est désormais le seul lot autorisé.
+
+- [ ] Lot 3 — Auditer les capacités WCFM et les métadonnées disponibles pour une création de boutique réellement persistante.
+- [ ] Lot 3 — Concevoir le parcours mobile progressif : identité, zone, image de couverture, horaires, premier plat et aperçu.
+- [ ] Lot 3 — Implémenter la sauvegarde/reprise automatique de l’onboarding et la publication de boutique avec les droits vendeur réels.
+- [ ] Lot 3 — Connecter le premier plat au wizard propriétaire du Lot 2 et préparer l’entrée palette sans entamer le Lot 9.
+- [ ] Lot 3 — Déployer, purger le cache, valider la version et exécuter la recette réelle WebKit/multi-navigateurs avant validation humaine.
+- [x] Lot 3 P0 — Unifier la route canonique marketplace/storefront, garantir HTTP 200, titre et canonical non-404, puis ajouter sa non-régression à la recette.
+- [ ] Lot 3 P0 — Corriger les contrastes et focus du cockpit jusqu’à zéro violation axe-core sérieuse ou critique sur les moteurs et tailles CDC.
+- [ ] Lot 3 P0 — Rendre les recettes clonables : variables d’environnement documentées, imports explicites, chemins portables et nettoyage vendeur isolé.
+- [ ] Lot 3 P0 — Prouver la persistance, la reprise, les refus nonce/propriété et la publication immédiate du flux onboarding sur les données WordPress/WCFM réelles.
+- [ ] Audit commun — Ne supprimer, désactiver, archiver ou modifier aucun compte ni donnée de recette existante sans instruction explicite ultérieure de l’utilisateur.
+- [ ] Audit commun — Vérifier les gates de non-régression `/`, `/restaurant/{slug}/`, `/store/{slug}/`, `/product/{slug}/`, `/cart/`, `/checkout/` et `/store-manager/` sur un vendeur réel.
+- [ ] Audit commun — Documenter les écarts historiques Lots 1 et 2 sans annuler leur validation utilisateur ni déclarer de capacité non prouvée.
+- [ ] Lot 3 — Étendre la recette aux reprises après rechargement à chaque étape, à la session lente/expirée, au double clic et à la validation MIME/taille des médias.
+- [ ] Lot 3 — Vérifier que le profil éditorial, la cuisine, la description, l’adresse, les horaires et l’état de service alimentent réellement le storefront, le titre et les métadonnées publiques.
+- [ ] Lot 3 — Centraliser la configuration WhatsApp publique côté serveur et prouver le comportement en cas de valeur absente.
+- [ ] Lot 3 — Consigner le commit, les versions, les plugins actifs, la configuration non sensible, les preuves brutes et les risques restants dans le rapport de recette.
 - [ ] Lots 3 à 12 — Exécuter uniquement après rapport de recette et validation du lot précédent.
+
+## Corrections explicitement autorisées — Lots 1, 2 et 3
+
+- [ ] Lot 1 — Rejouer la régression de routes publiques et du cockpit vendeur avec les URL WordPress françaises canoniques, les redirections legacy et les 404 éditoriales.
+- [ ] Lot 1 — Auditer les contrastes, focus et états réels du cockpit complet sur Chromium, Firefox et WebKit aux quatre breakpoints CDC.
+- [ ] Lot 1 — Mesurer et corriger les ressources inutiles ainsi que les opportunités Lighthouse bloquant le seuil de performance CDC.
+- [ ] Lot 2 — Remplacer définitivement le rechargement aveugle du wizard après publication par une actualisation de menu contrôlée et vérifiable.
+- [ ] Lot 2 — Ajouter une protection idempotente client et serveur contre le double clic de publication, sans créer, archiver ou supprimer d’objets de recette existants.
+- [ ] Lot 2 — Rejouer les contrôles d’autorisation propriétaire, média, options et publication sans mutation de données existantes hors scénario explicitement autorisé.
+- [ ] Lot 3 — Compléter l’onboarding persistant : cuisine, description, contact, fuseau horaire, couverture remplaçable et sémantique horaires explicite.
+- [ ] Lot 3 — Étendre les preuves de reprise par étape, validation média, expiration de session, double clic, nonce invalide et refus inter-vendeur en mode non destructif.
+- [ ] Lot 3 — Relever les performances cockpit et storefront après chaque correctif ; ne pas déclarer la conformité tant que le seuil CDC n’est pas mesuré.
+- [ ] Commun — Ne supprimer, désactiver, archiver ni modifier aucun compte, produit, média, commande ou donnée de recette existant sans nouvelle autorisation explicite.
 
 > Validation visuelle initiale : les captures desktop 1440 px et mobile 390 px montrent le template dédié, sans menu ou conteneur WCFM natif. La sidebar desktop, les onglets mobiles, les métriques, le rythme des ventes et le bloc menu sont rendus ; les données à zéro reflètent le nouveau vendeur de démonstration.
 
@@ -257,9 +294,12 @@
 
 # Transfert développeur GitHub public
 
-- [ ] Auditer le dépôt pour exclure identifiants, nonces, cookies, archives de recette et artefacts sensibles.
-- [ ] Ajouter une documentation d’installation, d’architecture, de recette et de déploiement WordPress.
-- [ ] Créer le dépôt GitHub public, envoyer le code auditable et vérifier le contenu publié.
+- [x] Auditer le dépôt pour exclure identifiants, nonces, cookies, archives de recette et artefacts sensibles.
+- [x] Ajouter une documentation d’installation, d’architecture, de recette et de déploiement WordPress.
+- [x] Créer le dépôt GitHub public, envoyer le code auditable et vérifier le contenu publié.
+- [x] Ajouter une version assainie du CDC Maître dans la documentation publique du dépôt.
+- [x] Ajouter une licence open source explicite au dépôt public.
+- [x] Créer et vérifier les jalons GitHub correspondant aux Lots 0 à 12.
 
 # Passe de fidélité micro-visuelle React → WordPress
 
@@ -269,3 +309,70 @@
 - [ ] Reproduire la composition React dans les boutiques WCFM, menus et fiches produits, sans éléments de chrome plugin.
 - [ ] Calibrer les états de panier, checkout et les breakpoints mobile avec les mêmes métriques visuelles.
 - [ ] Déployer seulement après revue des écarts, avec une liste explicite des divergences résiduelles si elles existent.
+
+# CDC — Lot 4 : aide et prise en main vendeur
+- [x] Ajouter le tour de première prise en main en trois repères : service, commandes et ajout de plat.
+- [x] Rendre le tour définitivement non automatique après la décision explicite du vendeur, par préférence persistante protégée.
+- [x] Ajouter l’aide contextuelle persistante et le lien WhatsApp résolu côté serveur, sans numéro de secours codé en dur.
+- [x] Déployer RestoCommerce 2.6.0, purger le cache et vérifier la distribution de l’asset d’aide.
+- [ ] Rejouer le tour connecté, la persistance, le clavier et les quatre breakpoints sur Chromium, Firefox et WebKit avec une session vendeur explicitement autorisée.
+
+# CDC — Lot 5 : notifications vendeur
+- [x] Ajouter un journal additif des nouvelles commandes et changements de statut, limité aux vendeurs propriétaires des lignes commandées.
+- [x] Ajouter le centre de notifications, la cloche, les réglages son/vibration, les alertes navigateur optionnelles et le lien WhatsApp résolu côté serveur.
+- [x] Rafraîchir les alertes et compteurs actifs du cockpit sans rechargement, seulement pendant l’ouverture du navigateur.
+- [x] Déployer RestoCommerce 2.6.3, purger LiteSpeed et vérifier la version distribuée avec cache-busting.
+- [ ] Rejouer l’événement de nouvelle commande, la permission navigateur, les préférences et la visibilité inter-vendeurs avec une session vendeur et un scénario de commande explicitement autorisés.
+
+# CDC — Lot 6 : suivi public de commande
+- [x] Ajouter un suivi à la page WooCommerce de commande reçue, sans route ni jeton secondaire.
+- [x] Exiger la clé de commande WooCommerce avant toute restitution et utiliser une comparaison constante.
+- [x] Afficher la progression Reçue → En préparation → Prête → Récupérée / livrée par restaurant, avec état clôturé distinct.
+- [x] Proposer WhatsApp uniquement si le résolveur existant fournit un numéro, sans envoi automatique ni valeur de secours.
+- [x] Déployer RestoCommerce 2.7.0, purger LiteSpeed et vérifier les assets publics avec cache-busting.
+- [ ] Rejouer sur des reçus de commande explicitement autorisés : clé valide/invalide, isolation client, multi-restaurants, transitions, annulation et WhatsApp.
+
+# CDC — Lot 7 : avis vérifiés et modération
+- [x] Restreindre le dépôt d’avis à une commande WooCommerce terminée avec clé native valide, une fois par restaurant et par achat.
+- [x] Calculer les scores publics uniquement sur les avis réels approuvés, sans avis, note ou compteur fictif.
+- [x] Ajouter une consultation isolée dans le cockpit et un signalement vendeur additif, sans suppression ni masquage automatique.
+- [x] Déployer RestoCommerce 2.7.1, purger LiteSpeed et vérifier les assets CSS/JavaScript publics.
+- [ ] Rejouer les refus, la création unique, le doublon, le résumé et le signalement avec une commande terminée et une session vendeur explicitement autorisées.
+
+# CDC — Lot 8 : analyses vendeur
+- [x] Ajouter les cartes plat de la semaine, plat sans commande, tendances 7 jours et tendances 30 jours.
+- [x] Limiter les calculs aux lignes WooCommerce réellement détenues par le vendeur et exclure les statuts non commerciaux.
+- [x] Prévoir des états de données insuffisantes sans valeur fictive ni prédiction.
+- [x] Déployer RestoCommerce 2.7.2, purger LiteSpeed et vérifier l’asset des analyses avec cache-busting.
+- [ ] Rejouer les chiffres sur une session vendeur autorisée et rapprocher les cartes des rapports WooCommerce pour un historique faible et un historique volumineux.
+
+# CDC — Lot 9 : palettes par restaurant
+- [x] Ajouter quatre palettes nommées, avec cartes d’aperçu et choix explicite dans le cockpit.
+- [x] Persister uniquement le choix volontaire du vendeur et limiter son application au cockpit, à sa fiche et à ses produits.
+- [x] Garder Comptoir éditorial par défaut et éviter toute modification de la marketplace générale.
+- [x] Vérifier neuf couples de contraste nominaux à au moins 4,5:1, puis déployer RestoCommerce 2.7.3 et purger LiteSpeed.
+- [ ] Rejouer l’enregistrement, l’isolation inter-restaurants et les rendus réels sur les trois moteurs et quatre breakpoints avec une session vendeur autorisée.
+
+# CDC — Lot 10 : système de design
+- [x] Documenter le système de design public : couleurs, palettes, typographie, espacements et règles de contribution.
+- [x] Documenter les composants restaurant, quick view, side cart, suivi, avis et cockpit vendeur.
+- [x] Formaliser boutons, cartes, pills, badges, icônes, focus, clavier, contraste, mouvement et états de données manquantes.
+- [ ] Rejouer les validations visuelles connectées sur l’ensemble des composants documentés avec une session vendeur autorisée.
+
+# CDC — Lot 11 : décision checkout
+- [x] Comparer le checkout WhatsApp actuel, une passerelle carte/portefeuille WooCommerce et le paiement WhatsApp interactif.
+- [x] Documenter les sources officielles, l’architecture conditionnelle, les risques opérationnels et les gates de décision.
+- [x] Conserver le code paiement hors périmètre, sans secret, configuration de moyen ni transaction réelle.
+- [ ] Obtenir une décision métier explicite sur pays, devise, entité encaissante, reversement vendeur et passerelle avant toute intégration de paiement.
+
+# CDC — Lot 12 : réseau et appareil dégradés
+- [x] Ajouter une recette Chromium mobile publique avec latence, débit et CPU ralentis.
+- [x] Mesurer marketplace, fiche restaurant, fiche produit et ajout panier dans une session isolée détruite après test.
+- [x] Documenter les chiffres de la passe réussie et les limites sans déclarer de conformité performance globale.
+- [ ] Rejouer sur téléphone réel, en multi-moteurs et sur les parcours vendeur quand une session explicitement autorisée sera disponible.
+
+# Finalisation Lots 1 à 12
+- [x] Rejouer la régression publique multi-moteurs ciblée et les audits axe publics.
+- [x] Corriger puis redéployer le contraste public détecté par axe en RestoCommerce 2.7.4.
+- [x] Produire le rapport global factuel `docs/receipts/final-lots-1-12-report.md`.
+- [ ] Compléter les preuves métier connectées, téléphone réel, décision de paiement et objectif Performance ≥90 avant toute déclaration de conformité CDC complète.

@@ -28,12 +28,13 @@ function restocommerce_enqueue_assets() : void {
 	wp_enqueue_style( 'restocommerce-wcfm-store', get_template_directory_uri() . '/assets/css/wcfm-store.css', array( 'restocommerce-frontend' ), restocommerce_asset_version( '/assets/css/wcfm-store.css' ) );
 	if ( is_front_page() ) { wp_enqueue_style( 'restocommerce-home-editorial', get_template_directory_uri() . '/assets/css/home-editorial.css', array( 'restocommerce-frontend' ), restocommerce_asset_version( '/assets/css/home-editorial.css' ) ); }
 	$micro_parity_dependencies = array( 'restocommerce-frontend' );
-	if ( restocommerce_current_store_vendor() || is_product() ) { wp_enqueue_style( 'restocommerce-storefront', get_template_directory_uri() . '/assets/css/storefront.css', array( 'restocommerce-frontend' ), restocommerce_asset_version( '/assets/css/storefront.css' ) ); $micro_parity_dependencies[] = 'restocommerce-storefront'; }
+	if ( restocommerce_current_store_vendor() || is_product() ) { wp_enqueue_style( 'restocommerce-storefront', get_template_directory_uri() . '/assets/css/storefront.css', array( 'restocommerce-frontend' ), restocommerce_asset_version( '/assets/css/storefront.css' ) ); wp_enqueue_style( 'restocommerce-vendor-reviews', get_template_directory_uri() . '/assets/css/vendor-reviews.css', array( 'restocommerce-storefront' ), restocommerce_asset_version( '/assets/css/vendor-reviews.css' ) ); wp_enqueue_style( 'restocommerce-vendor-palettes-public', get_template_directory_uri() . '/assets/css/vendor-palettes.css', array( 'restocommerce-storefront' ), restocommerce_asset_version( '/assets/css/vendor-palettes.css' ) ); $micro_parity_dependencies[] = 'restocommerce-storefront'; }
 	if ( is_cart() || ( is_checkout() && ! is_order_received_page() ) ) { wp_enqueue_style( 'restocommerce-commerce-flows', get_template_directory_uri() . '/assets/css/commerce-flows.css', array( 'restocommerce-frontend' ), restocommerce_asset_version( '/assets/css/commerce-flows.css' ) ); $micro_parity_dependencies[] = 'restocommerce-commerce-flows'; }
 	if ( is_front_page() ) { $micro_parity_dependencies[] = 'restocommerce-home-editorial'; }
 	wp_enqueue_style( 'restocommerce-micro-parity', get_template_directory_uri() . '/assets/css/micro-parity.css', $micro_parity_dependencies, restocommerce_asset_version( '/assets/css/micro-parity.css' ) );
 	wp_enqueue_style( 'restocommerce-accessibility-remediation', get_template_directory_uri() . '/assets/css/accessibility-remediation.css', array( 'restocommerce-micro-parity', 'restocommerce-cart-drawer' ), restocommerce_asset_version( '/assets/css/accessibility-remediation.css' ) );
 	wp_enqueue_style( 'restocommerce-ux-foundations', get_template_directory_uri() . '/assets/css/ux-foundations.css', array( 'restocommerce-accessibility-remediation' ), restocommerce_asset_version( '/assets/css/ux-foundations.css' ) );
+	if ( function_exists( 'is_order_received_page' ) && is_order_received_page() ) { wp_enqueue_style( 'restocommerce-order-tracking', get_template_directory_uri() . '/assets/css/order-tracking.css', array( 'restocommerce-ux-foundations' ), restocommerce_asset_version( '/assets/css/order-tracking.css' ) ); wp_enqueue_style( 'restocommerce-vendor-reviews-received', get_template_directory_uri() . '/assets/css/vendor-reviews.css', array( 'restocommerce-order-tracking' ), restocommerce_asset_version( '/assets/css/vendor-reviews.css' ) ); wp_enqueue_script( 'restocommerce-vendor-reviews', get_template_directory_uri() . '/assets/js/vendor-reviews.js', array(), restocommerce_asset_version( '/assets/js/vendor-reviews.js' ), true ); wp_localize_script( 'restocommerce-vendor-reviews', 'restocommerceReview', array( 'ajaxUrl' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce( 'restocommerce_vendor_review' ) ) ); }
 	if ( class_exists( 'WooCommerce' ) ) {
 		wp_enqueue_script( 'restocommerce-interactions', get_template_directory_uri() . '/assets/js/cart.js', array( 'jquery', 'wc-add-to-cart', 'wc-cart-fragments' ), restocommerce_asset_version( '/assets/js/cart.js' ), true );
 		wp_localize_script( 'restocommerce-interactions', 'restocommerceTheme', array( 'cartUrl' => wc_get_cart_url(), 'checkoutUrl' => wc_get_checkout_url(), 'ajaxUrl' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce( 'restocommerce_quick_view' ) ) );
@@ -92,6 +93,20 @@ function restocommerce_vendor_default_dish_categories() : array {
 function restocommerce_vendor_option_groups( int $vendor_id ) : array {
 	$groups = get_user_meta( $vendor_id, 'restocommerce_vendor_option_groups', true );
 	return is_array( $groups ) ? array_values( array_filter( $groups, 'is_array' ) ) : array();
+}
+
+function restocommerce_vendor_palettes() : array {
+	return array(
+		'comptoir' => array( 'label' => __( 'Comptoir éditorial', 'restocommerce' ), 'description' => __( 'Ivoire, vert service et terre cuite.', 'restocommerce' ) ),
+		'safran'    => array( 'label' => __( 'Safran de médina', 'restocommerce' ), 'description' => __( 'Sable clair, bleu nuit et épice chaude.', 'restocommerce' ) ),
+		'jardin'    => array( 'label' => __( 'Jardin de saison', 'restocommerce' ), 'description' => __( 'Vert feuille, crème végétale et brique.', 'restocommerce' ) ),
+		'nuit'      => array( 'label' => __( 'Service du soir', 'restocommerce' ), 'description' => __( 'Nuit profonde, ivoire et cuivre.', 'restocommerce' ) ),
+	);
+}
+
+function restocommerce_vendor_palette( int $vendor_id ) : string {
+	$palette = sanitize_key( (string) get_user_meta( $vendor_id, 'restocommerce_vendor_palette', true ) );
+	return array_key_exists( $palette, restocommerce_vendor_palettes() ) ? $palette : 'comptoir';
 }
 
 function restocommerce_vendor_save_option_groups( int $vendor_id, array $groups ) : void {
@@ -183,6 +198,62 @@ function restocommerce_vendor_orders( int $vendor_id, int $limit = 100 ) : array
 	return $rows;
 }
 
+/** Direction « Atelier du Service » : journal additif des événements métier, sans purge ni écrasement des alertes existantes. */
+function restocommerce_vendor_order_vendor_ids( WC_Order $order ) : array {
+	$vendor_ids = array();
+	foreach ( $order->get_items( 'line_item' ) as $item ) {
+		$product_id = $item->get_variation_id() ?: $item->get_product_id();
+		$vendor_id  = $product_id ? (int) get_post_field( 'post_author', $product_id ) : 0;
+		if ( $vendor_id > 0 ) { $vendor_ids[] = $vendor_id; }
+	}
+	return array_values( array_unique( $vendor_ids ) );
+}
+
+function restocommerce_vendor_notification_records( int $vendor_id, int $limit = 40 ) : array {
+	$records = array_filter( get_user_meta( $vendor_id, 'restocommerce_vendor_notification', false ), 'is_array' );
+	usort( $records, static function( array $a, array $b ) : int { return (int) ( $b['createdAt'] ?? 0 ) <=> (int) ( $a['createdAt'] ?? 0 ); } );
+	return array_slice( $records, 0, $limit );
+}
+
+function restocommerce_vendor_append_notification( int $vendor_id, WC_Order $order, string $event ) : void {
+	$notification_id = 'order-' . $order->get_id() . '-' . sanitize_key( $event );
+	foreach ( get_user_meta( $vendor_id, 'restocommerce_vendor_notification', false ) as $record ) {
+		if ( is_array( $record ) && $notification_id === ( $record['id'] ?? '' ) ) { return; }
+	}
+	$status = str_replace( 'wc-', '', $order->get_status() );
+	$label  = wc_get_order_status_name( 'wc-' . $status );
+	$copy   = 'received' === $event
+		? sprintf( __( 'La commande #%s attend votre prise en charge.', 'restocommerce' ), $order->get_order_number() )
+		: sprintf( __( 'La commande #%1$s est maintenant « %2$s ».', 'restocommerce' ), $order->get_order_number(), $label );
+	add_user_meta( $vendor_id, 'restocommerce_vendor_notification', array(
+		'id'        => $notification_id,
+		'orderId'   => (int) $order->get_id(),
+		'event'     => sanitize_key( $event ),
+		'title'     => 'received' === $event ? __( 'Nouvelle commande', 'restocommerce' ) : __( 'Commande mise à jour', 'restocommerce' ),
+		'message'   => $copy,
+		'createdAt' => time(),
+	), false );
+}
+
+function restocommerce_vendor_record_new_order_notifications( int $order_id ) : void {
+	$order = function_exists( 'wc_get_order' ) ? wc_get_order( $order_id ) : false;
+	if ( ! $order instanceof WC_Order ) { return; }
+	foreach ( restocommerce_vendor_order_vendor_ids( $order ) as $vendor_id ) { restocommerce_vendor_append_notification( $vendor_id, $order, 'received' ); }
+}
+add_action( 'woocommerce_new_order', 'restocommerce_vendor_record_new_order_notifications', 20 );
+
+function restocommerce_vendor_record_order_status_notifications( int $order_id, string $old_status, string $new_status, $order = null ) : void {
+	$order = $order instanceof WC_Order ? $order : ( function_exists( 'wc_get_order' ) ? wc_get_order( $order_id ) : false );
+	if ( ! $order instanceof WC_Order || $old_status === $new_status ) { return; }
+	foreach ( restocommerce_vendor_order_vendor_ids( $order ) as $vendor_id ) { restocommerce_vendor_append_notification( $vendor_id, $order, 'status-' . sanitize_key( $new_status ) ); }
+}
+add_action( 'woocommerce_order_status_changed', 'restocommerce_vendor_record_order_status_notifications', 20, 4 );
+
+function restocommerce_vendor_notification_preferences( int $vendor_id ) : array {
+	$preferences = get_user_meta( $vendor_id, 'restocommerce_vendor_notification_preferences', true );
+	return array( 'sound' => ! empty( $preferences['sound'] ), 'vibration' => ! empty( $preferences['vibration'] ) );
+}
+
 function restocommerce_vendor_products_for_dashboard( int $vendor_id ) : array {
 	if ( ! function_exists( 'wc_get_product' ) ) { return array(); }
 	$ids = get_posts( array( 'post_type' => 'product', 'post_status' => array( 'publish', 'draft', 'private' ), 'author' => $vendor_id, 'posts_per_page' => -1, 'fields' => 'ids', 'orderby' => 'menu_order date', 'order' => 'DESC' ) );
@@ -193,6 +264,27 @@ function restocommerce_vendor_products_for_dashboard( int $vendor_id ) : array {
 		$rows[] = array( 'id' => $product->get_id(), 'name' => $product->get_name(), 'category' => $category, 'price' => $product->get_price_html() ?: wc_price( (float) $product->get_price() ), 'available' => $product->is_in_stock() );
 	}
 	return $rows;
+}
+
+/** Direction « Atelier du Service » : des conseils issus seulement de l’historique WooCommerce du restaurant, jamais de valeurs de démonstration. */
+function restocommerce_vendor_insights( int $vendor_id ) : array {
+	$now = current_time( 'timestamp' ); $week = 7 * DAY_IN_SECONDS; $month = 30 * DAY_IN_SECONDS; $cutoff = $now - ( 365 * DAY_IN_SECONDS );
+	$orders = function_exists( 'wc_get_orders' ) ? wc_get_orders( array( 'limit' => -1, 'orderby' => 'date', 'order' => 'DESC', 'date_created' => '>=' . gmdate( 'Y-m-d H:i:s', $cutoff ), 'status' => array_keys( wc_get_order_statuses() ) ) ) : array();
+	$excluded_statuses = array( 'cancelled', 'failed', 'refunded', 'trash' ); $weekly_products = array(); $last_sold = array(); $current_week = 0.0; $previous_week = 0.0; $current_month = 0.0; $previous_month = 0.0; $real_orders = 0;
+	foreach ( $orders as $order ) {
+		if ( ! $order instanceof WC_Order || in_array( $order->get_status(), $excluded_statuses, true ) ) { continue; }
+		$date = $order->get_date_created(); $timestamp = $date ? $date->getTimestamp() : 0; if ( ! $timestamp ) { continue; }
+		$items = restocommerce_vendor_order_items( $order, $vendor_id ); if ( ! $items ) { continue; }
+		++$real_orders; $amount = 0.0;
+		foreach ( $items as $item ) { $product_id = (int) ( $item->get_variation_id() ?: $item->get_product_id() ); $amount += (float) $item->get_total() + (float) $item->get_total_tax(); if ( $product_id ) { $last_sold[ $product_id ] = max( $timestamp, (int) ( $last_sold[ $product_id ] ?? 0 ) ); if ( $timestamp >= $now - $week ) { $weekly_products[ $product_id ] = ( $weekly_products[ $product_id ] ?? 0 ) + (int) $item->get_quantity(); } } }
+		if ( $timestamp >= $now - $week ) { $current_week += $amount; } elseif ( $timestamp >= $now - ( 2 * $week ) ) { $previous_week += $amount; }
+		if ( $timestamp >= $now - $month ) { $current_month += $amount; } elseif ( $timestamp >= $now - ( 2 * $month ) ) { $previous_month += $amount; }
+	}
+	arsort( $weekly_products ); $top_product_id = $weekly_products ? (int) array_key_first( $weekly_products ) : 0; $top_product = $top_product_id ? wc_get_product( $top_product_id ) : false;
+	$inactive = array(); foreach ( restocommerce_vendor_products_for_dashboard( $vendor_id ) as $product ) { $last = (int) ( $last_sold[ $product['id'] ] ?? 0 ); $days = $last ? max( 0, (int) floor( ( $now - $last ) / DAY_IN_SECONDS ) ) : null; if ( null === $days || $days >= 14 ) { $inactive[] = array( 'name' => $product['name'], 'days' => $days ); } }
+	usort( $inactive, static function( array $a, array $b ) : int { return ( $b['days'] ?? 100000 ) <=> ( $a['days'] ?? 100000 ); } );
+	$trend = static function( float $current, float $previous ) : array { return array( 'current' => $current, 'previous' => $previous, 'change' => $previous > 0 ? round( ( ( $current - $previous ) / $previous ) * 100 ) : null ); };
+	return array( 'historyCount' => $real_orders, 'topProduct' => $top_product ? array( 'name' => $top_product->get_name(), 'quantity' => (int) ( $weekly_products[ $top_product_id ] ?? 0 ) ) : null, 'inactive' => array_slice( $inactive, 0, 3 ), 'weekTrend' => $trend( $current_week, $previous_week ), 'monthTrend' => $trend( $current_month, $previous_month ) );
 }
 
 function restocommerce_vendor_dashboard_data( int $vendor_id ) : array {
@@ -206,7 +298,7 @@ function restocommerce_vendor_dashboard_data( int $vendor_id ) : array {
 	$active = count( array_filter( $orders, static fn( $order ) => 'completed' !== $order['state'] ) );
 	$average = $today_orders ? $today_sales / count( $today_orders ) : 0.0;
 	$change = $yesterday_sales > 0 ? round( ( ( $today_sales - $yesterday_sales ) / $yesterday_sales ) * 100 ) : null;
-	return array( 'store_name' => restocommerce_vendor_store_name( $vendor_id ), 'orders' => $orders, 'products' => $products, 'menu_library' => restocommerce_vendor_menu_library( $vendor_id ), 'active_orders' => $active, 'today_count' => count( $today_orders ), 'today_sales' => $today_sales, 'yesterday_sales' => $yesterday_sales, 'average' => $average, 'change' => $change, 'hourly' => $hourly, 'is_paused' => restocommerce_vendor_service_is_paused( $vendor_id ), 'average_delay' => max( 1, (int) get_user_meta( $vendor_id, 'restocommerce_average_delay', true ) ?: 18 ) );
+	return array( 'store_name' => restocommerce_vendor_store_name( $vendor_id ), 'orders' => $orders, 'products' => $products, 'menu_library' => restocommerce_vendor_menu_library( $vendor_id ), 'active_orders' => $active, 'today_count' => count( $today_orders ), 'today_sales' => $today_sales, 'yesterday_sales' => $yesterday_sales, 'average' => $average, 'change' => $change, 'hourly' => $hourly, 'insights' => restocommerce_vendor_insights( $vendor_id ), 'is_paused' => restocommerce_vendor_service_is_paused( $vendor_id ), 'average_delay' => max( 1, (int) get_user_meta( $vendor_id, 'restocommerce_average_delay', true ) ?: 18 ) );
 }
 
 function restocommerce_enqueue_vendor_dashboard_assets() : void {
@@ -219,9 +311,18 @@ function restocommerce_enqueue_vendor_dashboard_assets() : void {
 	wp_enqueue_style( 'restocommerce-vendor-dashboard-app', get_template_directory_uri() . '/assets/css/vendor-dashboard-app.css', array( 'restocommerce-fonts' ), restocommerce_asset_version( '/assets/css/vendor-dashboard-app.css' ) );
 	wp_enqueue_style( 'restocommerce-vendor-product-wizard', get_template_directory_uri() . '/assets/css/vendor-product-wizard.css', array( 'restocommerce-vendor-dashboard-app' ), restocommerce_asset_version( '/assets/css/vendor-product-wizard.css' ) );
 	wp_enqueue_style( 'restocommerce-vendor-product-wizard-a11y', get_template_directory_uri() . '/assets/css/vendor-product-wizard-a11y.css', array( 'restocommerce-vendor-product-wizard' ), restocommerce_asset_version( '/assets/css/vendor-product-wizard-a11y.css' ) );
+	wp_enqueue_style( 'restocommerce-vendor-onboarding', get_template_directory_uri() . '/assets/css/vendor-onboarding.css', array( 'restocommerce-vendor-dashboard-app' ), restocommerce_asset_version( '/assets/css/vendor-onboarding.css' ) );
+	wp_enqueue_style( 'restocommerce-vendor-guidance', get_template_directory_uri() . '/assets/css/vendor-guidance.css', array( 'restocommerce-vendor-dashboard-app' ), restocommerce_asset_version( '/assets/css/vendor-guidance.css' ) );
+	wp_enqueue_style( 'restocommerce-vendor-notifications', get_template_directory_uri() . '/assets/css/vendor-notifications.css', array( 'restocommerce-vendor-dashboard-app' ), restocommerce_asset_version( '/assets/css/vendor-notifications.css' ) );
+	wp_enqueue_style( 'restocommerce-vendor-reviews-dashboard', get_template_directory_uri() . '/assets/css/vendor-reviews.css', array( 'restocommerce-vendor-dashboard-app' ), restocommerce_asset_version( '/assets/css/vendor-reviews.css' ) );
+	wp_enqueue_style( 'restocommerce-vendor-insights', get_template_directory_uri() . '/assets/css/vendor-insights.css', array( 'restocommerce-vendor-dashboard-app' ), restocommerce_asset_version( '/assets/css/vendor-insights.css' ) );
+	wp_enqueue_style( 'restocommerce-vendor-palettes-dashboard', get_template_directory_uri() . '/assets/css/vendor-palettes.css', array( 'restocommerce-vendor-dashboard-app' ), restocommerce_asset_version( '/assets/css/vendor-palettes.css' ) );
 	wp_enqueue_script( 'restocommerce-vendor-dashboard-app', get_template_directory_uri() . '/assets/js/vendor-dashboard-app.js', array(), restocommerce_asset_version( '/assets/js/vendor-dashboard-app.js' ), true );
 	wp_enqueue_script( 'restocommerce-vendor-product-wizard', get_template_directory_uri() . '/assets/js/vendor-product-wizard.js', array( 'restocommerce-vendor-dashboard-app' ), restocommerce_asset_version( '/assets/js/vendor-product-wizard.js' ), true );
-	wp_localize_script( 'restocommerce-vendor-dashboard-app', 'restocommerceVendorApp', array( 'ajaxUrl' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce( 'restocommerce_vendor_dashboard' ), 'vendorId' => $vendor_id, 'wizard' => array( 'categories' => restocommerce_vendor_default_dish_categories(), 'supportUrl' => 'https://wa.me/212614990603?text=' . rawurlencode( __( 'Bonjour, j’ai besoin d’aide pour ajouter un plat sur RestoCommerce.', 'restocommerce' ) ) ) ) );
+	wp_enqueue_script( 'restocommerce-vendor-onboarding', get_template_directory_uri() . '/assets/js/vendor-onboarding.js', array( 'restocommerce-vendor-dashboard-app', 'restocommerce-vendor-product-wizard' ), restocommerce_asset_version( '/assets/js/vendor-onboarding.js' ), true );
+	$support_url = function_exists( 'restocommerce_vendor_whatsapp_support_url' ) ? restocommerce_vendor_whatsapp_support_url( $vendor_id, __( 'Bonjour, j’ai besoin d’aide pour gérer ma boutique RestoCommerce.', 'restocommerce' ) ) : '';
+	$support_message = __( 'L’aide WhatsApp n’est pas encore configurée pour cette boutique. Consultez le guide ou contactez l’administrateur.', 'restocommerce' );
+	wp_localize_script( 'restocommerce-vendor-dashboard-app', 'restocommerceVendorApp', array( 'ajaxUrl' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce( 'restocommerce_vendor_dashboard' ), 'vendorId' => $vendor_id, 'wizard' => array( 'categories' => restocommerce_vendor_default_dish_categories(), 'supportUrl' => $support_url, 'supportUnavailableMessage' => $support_message ), 'guidance' => array( 'tourDismissed' => 'yes' === get_user_meta( $vendor_id, 'restocommerce_vendor_guidance_tour_dismissed', true ), 'supportUrl' => $support_url, 'supportUnavailableMessage' => $support_message ), 'notifications' => array( 'pollInterval' => 45000, 'preferences' => restocommerce_vendor_notification_preferences( $vendor_id ), 'supportUrl' => $support_url, 'supportUnavailableMessage' => $support_message ), 'palettes' => array( 'current' => restocommerce_vendor_palette( $vendor_id ), 'items' => restocommerce_vendor_palettes() ), 'onboarding' => restocommerce_vendor_onboarding_state( $vendor_id ) ) );
 }
 add_action( 'wp_enqueue_scripts', 'restocommerce_enqueue_vendor_dashboard_assets', 99 );
 
@@ -235,9 +336,41 @@ function restocommerce_dequeue_vendor_dashboard_legacy_assets() : void {
 }
 add_action( 'wp_enqueue_scripts', 'restocommerce_dequeue_vendor_dashboard_legacy_assets', 1000 );
 
+/** Direction « Le Comptoir Éditorial » : la fiche restaurant et la fiche plat ont leur propre habillage ; les CSS de back-office ne doivent pas retarder le premier rendu public. */
+function restocommerce_dequeue_public_legacy_styles() : void {
+	if ( ! restocommerce_current_store_vendor() && ! is_product() ) { return; }
+	$styles = array(
+		'wc-blocks-style',
+		'woocommerce-layout',
+		'woocommerce-smallscreen',
+		'woocommerce-general',
+		'hostinger-reach-subscription-block',
+		'jquery-ui-style',
+		'wcfm_fa_icon_css',
+		'wcfm_core_css',
+		'wcfm-leaflet-map-style',
+		'wcfm-leaflet-search-style',
+		'select2_css',
+		'wcfmmp_store_css',
+		'wcfmmp_store_responsive_css',
+	);
+	foreach ( $styles as $handle ) { wp_dequeue_style( $handle ); }
+}
+add_action( 'wp_enqueue_scripts', 'restocommerce_dequeue_public_legacy_styles', 1000 );
+
+function restocommerce_enqueue_storefront_contrast_hotfix() : void {
+	if ( ! restocommerce_current_store_vendor() && ! is_product() ) { return; }
+	wp_enqueue_style( 'restocommerce-storefront-contrast-hotfix', get_template_directory_uri() . '/assets/css/storefront-contrast-hotfix.css', array( 'restocommerce-vendor-palettes-public' ), restocommerce_asset_version( '/assets/css/storefront-contrast-hotfix.css' ) );
+}
+add_action( 'wp_enqueue_scripts', 'restocommerce_enqueue_storefront_contrast_hotfix', 1001 );
+
 add_filter( 'body_class', function( array $classes ) : array {
 	if ( restocommerce_is_vendor_dashboard() ) { $classes[] = 'rc-vendor-dashboard'; }
 	if ( restocommerce_is_vendor_dashboard_home() ) { $classes[] = 'rc-vendor-dashboard-home'; }
+	if ( restocommerce_is_vendor_dashboard_home() ) { $classes[] = 'rc-vendor-palette-' . restocommerce_vendor_palette( get_current_user_id() ); }
+	$store_vendor = restocommerce_current_store_vendor();
+	if ( $store_vendor instanceof WP_User ) { $classes[] = 'rc-palette-' . restocommerce_vendor_palette( (int) $store_vendor->ID ); }
+	elseif ( is_product() ) { $product_vendor_id = (int) get_post_field( 'post_author', get_queried_object_id() ); if ( $product_vendor_id ) { $classes[] = 'rc-palette-' . restocommerce_vendor_palette( $product_vendor_id ); } }
 	return $classes;
 } );
 
@@ -278,6 +411,20 @@ function restocommerce_ajax_vendor_toggle_product() : void {
 }
 add_action( 'wp_ajax_restocommerce_vendor_toggle_product', 'restocommerce_ajax_vendor_toggle_product' );
 
+/** Direction « Atelier du Service » : le menu est relu après une publication pour éviter un rechargement de page aveugle. */
+function restocommerce_ajax_vendor_menu_data() : void {
+	$vendor_id = restocommerce_vendor_ajax_guard();
+	$products  = array_map(
+		static function( array $product ) : array {
+			$product['price'] = wp_strip_all_tags( (string) $product['price'] );
+			return $product;
+		},
+		restocommerce_vendor_products_for_dashboard( $vendor_id )
+	);
+	wp_send_json_success( array( 'products' => $products ) );
+}
+add_action( 'wp_ajax_restocommerce_vendor_menu_data', 'restocommerce_ajax_vendor_menu_data' );
+
 function restocommerce_vendor_ajax_guard() : int {
 	check_ajax_referer( 'restocommerce_vendor_dashboard', 'nonce' );
 	if ( ! is_user_logged_in() || ! function_exists( 'wcfm_is_vendor' ) || ! wcfm_is_vendor() ) {
@@ -285,6 +432,81 @@ function restocommerce_vendor_ajax_guard() : int {
 	}
 	return get_current_user_id();
 }
+
+/** Direction « Atelier du Service » : préférence explicite du restaurateur, jamais une réinitialisation automatique. */
+function restocommerce_ajax_vendor_dismiss_guidance_tour() : void {
+	$vendor_id = restocommerce_vendor_ajax_guard();
+	update_user_meta( $vendor_id, 'restocommerce_vendor_guidance_tour_dismissed', 'yes' );
+	wp_send_json_success( array( 'dismissed' => true, 'message' => __( 'Le guide ne s’affichera plus automatiquement.', 'restocommerce' ) ) );
+}
+add_action( 'wp_ajax_restocommerce_vendor_dismiss_guidance_tour', 'restocommerce_ajax_vendor_dismiss_guidance_tour' );
+
+function restocommerce_ajax_vendor_notifications_data() : void {
+	$vendor_id = restocommerce_vendor_ajax_guard();
+	$seen      = get_user_meta( $vendor_id, 'restocommerce_vendor_notification_seen', true );
+	$seen      = is_array( $seen ) ? $seen : array();
+	$records   = array_map( static function( array $record ) use ( $seen ) : array {
+		$record['isNew'] = empty( $seen[ $record['id'] ?? '' ] );
+		$record['time']  = ! empty( $record['createdAt'] ) ? wp_date( get_option( 'time_format' ), (int) $record['createdAt'] ) : '';
+		return $record;
+	}, restocommerce_vendor_notification_records( $vendor_id ) );
+	wp_send_json_success( array( 'notifications' => $records, 'unreadCount' => count( array_filter( $records, static function( array $record ) : bool { return ! empty( $record['isNew'] ); } ) ) ) );
+}
+add_action( 'wp_ajax_restocommerce_vendor_notifications_data', 'restocommerce_ajax_vendor_notifications_data' );
+
+function restocommerce_ajax_vendor_orders_summary() : void {
+	$vendor_id = restocommerce_vendor_ajax_guard();
+	$orders    = restocommerce_vendor_orders( $vendor_id );
+	$active    = count( array_filter( $orders, static function( array $order ) : bool { return 'completed' !== ( $order['state'] ?? '' ); } ) );
+	wp_send_json_success( array( 'activeOrders' => $active, 'totalOrders' => count( $orders ) ) );
+}
+add_action( 'wp_ajax_restocommerce_vendor_orders_summary', 'restocommerce_ajax_vendor_orders_summary' );
+
+function restocommerce_ajax_vendor_mark_notifications_seen() : void {
+	$vendor_id = restocommerce_vendor_ajax_guard();
+	$ids       = array_values( array_filter( array_map( 'sanitize_key', (array) ( $_POST['notification_ids'] ?? array() ) ) ) );
+	$known     = wp_list_pluck( restocommerce_vendor_notification_records( $vendor_id, 1000 ), 'id' );
+	$seen      = get_user_meta( $vendor_id, 'restocommerce_vendor_notification_seen', true );
+	$seen      = is_array( $seen ) ? $seen : array();
+	foreach ( $ids as $id ) { if ( in_array( $id, $known, true ) ) { $seen[ $id ] = time(); } }
+	update_user_meta( $vendor_id, 'restocommerce_vendor_notification_seen', $seen );
+	wp_send_json_success( array( 'message' => __( 'Les alertes sont marquées comme lues.', 'restocommerce' ) ) );
+}
+add_action( 'wp_ajax_restocommerce_vendor_mark_notifications_seen', 'restocommerce_ajax_vendor_mark_notifications_seen' );
+
+function restocommerce_ajax_vendor_notification_preferences() : void {
+	$vendor_id   = restocommerce_vendor_ajax_guard();
+	$preferences = array( 'sound' => ! empty( $_POST['sound'] ), 'vibration' => ! empty( $_POST['vibration'] ) );
+	update_user_meta( $vendor_id, 'restocommerce_vendor_notification_preferences', $preferences );
+	wp_send_json_success( array( 'preferences' => $preferences ) );
+}
+add_action( 'wp_ajax_restocommerce_vendor_notification_preferences', 'restocommerce_ajax_vendor_notification_preferences' );
+
+function restocommerce_ajax_vendor_save_palette() : void {
+	$vendor_id = restocommerce_vendor_ajax_guard();
+	$palette = sanitize_key( (string) ( $_POST['palette'] ?? '' ) );
+	if ( ! array_key_exists( $palette, restocommerce_vendor_palettes() ) ) { wp_send_json_error( array( 'message' => __( 'Cette palette n’est pas disponible.', 'restocommerce' ) ), 422 ); }
+	update_user_meta( $vendor_id, 'restocommerce_vendor_palette', $palette );
+	wp_send_json_success( array( 'palette' => $palette, 'message' => __( 'Votre ambiance est enregistrée pour les écrans RestoCommerce.', 'restocommerce' ) ) );
+}
+add_action( 'wp_ajax_restocommerce_vendor_save_palette', 'restocommerce_ajax_vendor_save_palette' );
+
+function restocommerce_ajax_vendor_reviews_data() : void {
+	$vendor_id = restocommerce_vendor_ajax_guard();
+	wp_send_json_success( array( 'records' => restocommerce_vendor_review_records( $vendor_id ), 'summary' => restocommerce_vendor_review_summary( $vendor_id ) ) );
+}
+add_action( 'wp_ajax_restocommerce_vendor_reviews_data', 'restocommerce_ajax_vendor_reviews_data' );
+
+function restocommerce_ajax_vendor_flag_review() : void {
+	$vendor_id = restocommerce_vendor_ajax_guard();
+	$comment_id = absint( $_POST['comment_id'] ?? 0 );
+	$comment = $comment_id ? get_comment( $comment_id ) : null;
+	if ( ! $comment || 'restocommerce_vendor_review' !== $comment->comment_type || $vendor_id !== (int) get_comment_meta( $comment_id, 'restocommerce_vendor_review_vendor_id', true ) ) { wp_send_json_error( array( 'message' => __( 'Cet avis ne relève pas de votre restaurant.', 'restocommerce' ) ), 403 ); }
+	update_comment_meta( $comment_id, 'restocommerce_vendor_review_flagged', 'yes' );
+	update_comment_meta( $comment_id, 'restocommerce_vendor_review_flagged_at', current_time( 'mysql', true ) );
+	wp_send_json_success( array( 'message' => __( 'Avis signalé pour modération. Il reste conservé jusqu’à examen.', 'restocommerce' ) ) );
+}
+add_action( 'wp_ajax_restocommerce_vendor_flag_review', 'restocommerce_ajax_vendor_flag_review' );
 
 function restocommerce_vendor_product_editor_payload( int $vendor_id, int $product_id = 0 ) : array {
 	$payload = array(
@@ -326,6 +548,22 @@ function restocommerce_vendor_get_or_create_category( string $slug, string $cust
 	return (int) $term->term_id;
 }
 
+function restocommerce_vendor_saved_product_payload( int $vendor_id, int $product_id, string $fallback_name = '', string $fallback_price = '' ) : array {
+	$product = wc_get_product( $product_id );
+	if ( ! $product || ! restocommerce_vendor_owns_product( $vendor_id, $product_id ) ) { return array(); }
+	$option_groups = array_values( array_filter( array_map( 'sanitize_key', (array) get_post_meta( $product_id, 'restocommerce_option_group_ids', true ) ) ) );
+	return array(
+		'product' => array(
+			'id'           => $product_id,
+			'name'         => $product->get_name() ?: $fallback_name,
+			'price'        => wp_strip_all_tags( $product->get_price_html() ) ?: $fallback_price,
+			'url'          => get_permalink( $product_id ),
+			'optionGroups' => $option_groups,
+		),
+		'message' => __( 'Le plat est publié. Les clients le voient maintenant sur votre carte.', 'restocommerce' ),
+	);
+}
+
 function restocommerce_ajax_vendor_save_product() : void {
 	$vendor_id = restocommerce_vendor_ajax_guard();
 	$product_id = absint( $_POST['product_id'] ?? 0 );
@@ -340,16 +578,28 @@ function restocommerce_ajax_vendor_save_product() : void {
 	if ( ! $name || '' === (string) $price || (float) $price < 0 || ( ! $category && ! $custom_category ) ) { wp_send_json_error( array( 'message' => __( 'Ajoutez le nom, le prix et une catégorie avant de publier.', 'restocommerce' ) ) ); }
 	if ( ! $product_id && empty( $_FILES['photo']['name'] ) && ! $source_image_id ) { wp_send_json_error( array( 'message' => __( 'Ajoutez une photo avant de publier ce plat.', 'restocommerce' ) ) ); }
 	if ( $product_id && ! get_post_thumbnail_id( $product_id ) && empty( $_FILES['photo']['name'] ) ) { wp_send_json_error( array( 'message' => __( 'Ajoutez une photo avant de publier ce plat.', 'restocommerce' ) ) ); }
+	$request_key = sanitize_text_field( wp_unslash( $_POST['request_key'] ?? '' ) );
+	$lock_key = $request_key ? '_restocommerce_product_submit_' . substr( hash( 'sha256', $request_key ), 0, 40 ) : '';
+	if ( $lock_key ) {
+		$existing = (string) get_user_meta( $vendor_id, $lock_key, true );
+		if ( ctype_digit( $existing ) ) {
+			$existing_payload = restocommerce_vendor_saved_product_payload( $vendor_id, (int) $existing, $name, wc_price( (float) $price ) );
+			if ( $existing_payload ) { wp_send_json_success( $existing_payload ); }
+		}
+		if ( 'pending' === $existing ) { wp_send_json_error( array( 'message' => __( 'La publication est déjà en cours. Patientez quelques secondes.', 'restocommerce' ) ), 409 ); }
+		if ( ! $existing && ! add_user_meta( $vendor_id, $lock_key, 'pending', true ) ) { wp_send_json_error( array( 'message' => __( 'La publication est déjà en cours. Patientez quelques secondes.', 'restocommerce' ) ), 409 ); }
+		if ( 'retry' === $existing ) { update_user_meta( $vendor_id, $lock_key, 'pending' ); }
+	}
 	$uploaded_photo_id = 0;
 	if ( ! empty( $_FILES['photo']['name'] ) ) {
 		require_once ABSPATH . 'wp-admin/includes/file.php'; require_once ABSPATH . 'wp-admin/includes/image.php'; require_once ABSPATH . 'wp-admin/includes/media.php';
 		$uploaded_photo_id = media_handle_upload( 'photo', 0 );
-		if ( is_wp_error( $uploaded_photo_id ) ) { wp_send_json_error( array( 'message' => __( 'La photo doit être une image lisible. Réessayez avec une autre photo.', 'restocommerce' ) ) ); }
+		if ( is_wp_error( $uploaded_photo_id ) ) { if ( $lock_key ) { update_user_meta( $vendor_id, $lock_key, 'retry' ); } wp_send_json_error( array( 'message' => __( 'La photo doit être une image lisible. Réessayez avec une autre photo.', 'restocommerce' ) ) ); }
 	}
 	$term_id = restocommerce_vendor_get_or_create_category( $category, $custom_category );
-	if ( ! $term_id ) { if ( $uploaded_photo_id ) { wp_delete_attachment( $uploaded_photo_id, true ); } wp_send_json_error( array( 'message' => __( 'Cette catégorie ne peut pas être créée.', 'restocommerce' ) ) ); }
+	if ( ! $term_id ) { if ( $lock_key ) { update_user_meta( $vendor_id, $lock_key, 'retry' ); } wp_send_json_error( array( 'message' => __( 'Cette catégorie ne peut pas être créée.', 'restocommerce' ) ) ); }
 	$product = $product_id ? wc_get_product( $product_id ) : new WC_Product_Simple();
-	if ( ! $product ) { wp_send_json_error( array( 'message' => __( 'Ce plat ne peut pas être préparé pour le moment.', 'restocommerce' ) ) ); }
+	if ( ! $product ) { if ( $lock_key ) { update_user_meta( $vendor_id, $lock_key, 'retry' ); } wp_send_json_error( array( 'message' => __( 'Ce plat ne peut pas être préparé pour le moment.', 'restocommerce' ) ) ); }
 	$product->set_name( $name ); $product->set_regular_price( $price ); $product->set_price( $price ); $product->set_description( $description ); $product->set_short_description( $description ); $product->set_status( $product_id ? get_post_status( $product_id ) : 'draft' ); $product->set_catalog_visibility( 'visible' ); $product->set_stock_status( 'instock' );
 	$saved_id = $product->save();
 	if ( ! $product_id ) { wp_update_post( array( 'ID' => $saved_id, 'post_author' => $vendor_id ) ); }
@@ -366,7 +616,8 @@ function restocommerce_ajax_vendor_save_product() : void {
 		set_post_thumbnail( $saved_id, $source_image_id );
 	}
 	$product = wc_get_product( $saved_id ); if ( $product ) { $product->set_status( 'publish' ); $product->save(); }
-		wp_send_json_success( array( 'product' => array( 'id' => $saved_id, 'name' => $product ? $product->get_name() : $name, 'price' => $product ? wp_strip_all_tags( $product->get_price_html() ) : wc_price( (float) $price ), 'url' => get_permalink( $saved_id ), 'optionGroups' => $valid_groups ), 'message' => __( 'Le plat est publié. Les clients le voient maintenant sur votre carte.', 'restocommerce' ) ) );
+	if ( $lock_key ) { update_user_meta( $vendor_id, $lock_key, (string) $saved_id ); }
+	wp_send_json_success( restocommerce_vendor_saved_product_payload( $vendor_id, $saved_id, $name, wc_price( (float) $price ) ) );
 }
 add_action( 'wp_ajax_restocommerce_vendor_save_product', 'restocommerce_ajax_vendor_save_product' );
 
@@ -560,6 +811,112 @@ add_action( 'woocommerce_checkout_create_order_line_item', function( WC_Order_It
 	if ( ! empty( $values['restocommerce_choices'] ) && is_array( $values['restocommerce_choices'] ) ) { foreach ( $values['restocommerce_choices'] as $label => $choices ) { $item->add_meta_data( sanitize_text_field( $label ), implode( ', ', array_map( 'sanitize_text_field', (array) $choices ) ), true ); } }
 }, 10, 3 );
 
+/** Direction « Atelier du Service » : suivi public limité à la page de reçu WooCommerce et à sa clé de commande, sans nouveau jeton réutilisable. */
+function restocommerce_order_tracking_has_valid_key( WC_Order $order ) : bool {
+	$provided_key = isset( $_GET['key'] ) ? wc_clean( wp_unslash( $_GET['key'] ) ) : '';
+	return $provided_key && hash_equals( $order->get_order_key(), (string) $provided_key );
+}
+
+function restocommerce_order_tracking_steps( string $state, string $order_status ) : array {
+	$steps = array(
+		'confirm'   => __( 'Reçue', 'restocommerce' ),
+		'cooking'   => __( 'En préparation', 'restocommerce' ),
+		'ready'     => __( 'Prête', 'restocommerce' ),
+		'completed' => __( 'Récupérée / livrée', 'restocommerce' ),
+	);
+	if ( in_array( $order_status, array( 'cancelled', 'failed', 'refunded' ), true ) ) {
+		return array( 'closed' => __( 'Commande clôturée', 'restocommerce' ) );
+	}
+	$current_index = array_search( $state, array_keys( $steps ), true );
+	$current_index = false === $current_index ? 0 : $current_index;
+	$rows = array(); $index = 0;
+	foreach ( $steps as $key => $label ) { $rows[] = array( 'key' => $key, 'label' => $label, 'active' => $index <= $current_index, 'current' => $index === $current_index ); ++$index; }
+	return $rows;
+}
+
+function restocommerce_order_tracking_whatsapp_url( WC_Order $order ) : string {
+	if ( ! function_exists( 'restocommerce_order_whatsapp_number' ) ) { return ''; }
+	$number = restocommerce_order_whatsapp_number( $order );
+	if ( ! $number ) { return ''; }
+	$message = sprintf( __( 'Bonjour, je consulte le suivi de ma commande #%1$s. Pouvez-vous m’aider si besoin ?', 'restocommerce' ), $order->get_order_number() );
+	return 'https://wa.me/' . rawurlencode( $number ) . '?text=' . rawurlencode( $message );
+}
+
+function restocommerce_render_order_tracking( $order_id ) : void {
+	$order = function_exists( 'wc_get_order' ) ? wc_get_order( $order_id ) : false;
+	if ( ! $order instanceof WC_Order || ! restocommerce_order_tracking_has_valid_key( $order ) ) { return; }
+	$vendor_ids = restocommerce_vendor_order_vendor_ids( $order );
+	if ( ! $vendor_ids ) { return; }
+	$whatsapp_url = restocommerce_order_tracking_whatsapp_url( $order );
+	?>
+	<section class="rc-order-tracking" aria-labelledby="rc-order-tracking-title">
+		<header><p><?php esc_html_e( 'Suivi de commande', 'restocommerce' ); ?></p><h2 id="rc-order-tracking-title"><?php esc_html_e( 'La cuisine vous tient au courant.', 'restocommerce' ); ?></h2><span><?php echo esc_html( sprintf( __( 'Commande #%s', 'restocommerce' ), $order->get_order_number() ) ); ?></span></header>
+		<?php foreach ( $vendor_ids as $vendor_id ) : $state = restocommerce_vendor_order_state( $order, $vendor_id ); $steps = restocommerce_order_tracking_steps( $state, $order->get_status() ); ?>
+			<article class="rc-order-tracking-card"><h3><?php echo esc_html( restocommerce_vendor_store_name( $vendor_id ) ); ?></h3><ol class="rc-order-tracking-steps">
+				<?php foreach ( $steps as $step ) : ?><li class="<?php echo ! empty( $step['active'] ) ? 'is-active' : ''; ?> <?php echo ! empty( $step['current'] ) ? 'is-current' : ''; ?>"><i aria-hidden="true"></i><span><?php echo esc_html( $step['label'] ); ?></span><?php if ( ! empty( $step['current'] ) ) : ?><b class="screen-reader-text"><?php esc_html_e( 'Étape actuelle', 'restocommerce' ); ?></b><?php endif; ?></li><?php endforeach; ?>
+			</ol></article>
+		<?php endforeach; ?>
+		<?php if ( $whatsapp_url ) : ?><a class="rc-order-tracking-whatsapp" href="<?php echo esc_url( $whatsapp_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Question sur ma commande via WhatsApp', 'restocommerce' ); ?> →</a><?php else : ?><p class="rc-order-tracking-note"><?php esc_html_e( 'Le contact WhatsApp du restaurant n’est pas configuré. Consultez les étapes ci-dessus ou contactez la maison par son canal habituel.', 'restocommerce' ); ?></p><?php endif; ?>
+	</section>
+	<?php
+}
+add_action( 'woocommerce_thankyou', 'restocommerce_render_order_tracking', 25 );
+
+/** Direction « Atelier du Service » : seuls les clients disposant du reçu d’une commande terminée peuvent déposer un avis, une fois par restaurant. */
+function restocommerce_vendor_review_records( int $vendor_id, int $limit = 80 ) : array {
+	$comments = get_comments( array( 'type' => 'restocommerce_vendor_review', 'status' => 'approve', 'number' => $limit, 'orderby' => 'comment_date_gmt', 'order' => 'DESC', 'meta_key' => 'restocommerce_vendor_review_vendor_id', 'meta_value' => $vendor_id ) );
+	$rows = array();
+	foreach ( $comments as $comment ) {
+		$rating = (int) get_comment_meta( $comment->comment_ID, 'restocommerce_vendor_review_rating', true );
+		if ( $rating < 1 || $rating > 5 ) { continue; }
+		$rows[] = array( 'id' => (int) $comment->comment_ID, 'rating' => $rating, 'content' => $comment->comment_content, 'date' => get_comment_date( get_option( 'date_format' ), $comment ), 'flagged' => 'yes' === get_comment_meta( $comment->comment_ID, 'restocommerce_vendor_review_flagged', true ) );
+	}
+	return $rows;
+}
+
+function restocommerce_vendor_review_summary( int $vendor_id ) : array {
+	$records = restocommerce_vendor_review_records( $vendor_id );
+	$ratings = array_column( $records, 'rating' );
+	return array( 'count' => count( $ratings ), 'average' => $ratings ? round( array_sum( $ratings ) / count( $ratings ), 1 ) : 0.0 );
+}
+
+function restocommerce_vendor_order_has_review( WC_Order $order, int $vendor_id ) : bool {
+	$comments = get_comments( array( 'type' => 'restocommerce_vendor_review', 'status' => 'all', 'post_id' => $order->get_id(), 'number' => 1, 'meta_key' => 'restocommerce_vendor_review_vendor_id', 'meta_value' => $vendor_id, 'fields' => 'ids' ) );
+	return ! empty( $comments );
+}
+
+function restocommerce_ajax_submit_vendor_review() : void {
+	check_ajax_referer( 'restocommerce_vendor_review', 'nonce' );
+	$order = function_exists( 'wc_get_order' ) ? wc_get_order( absint( $_POST['order_id'] ?? 0 ) ) : false;
+	$key = isset( $_POST['order_key'] ) ? wc_clean( wp_unslash( $_POST['order_key'] ) ) : '';
+	$vendor_id = absint( $_POST['vendor_id'] ?? 0 );
+	$rating = absint( $_POST['rating'] ?? 0 );
+	$content = sanitize_textarea_field( wp_unslash( $_POST['content'] ?? '' ) );
+	if ( ! $order instanceof WC_Order || ! $key || ! hash_equals( $order->get_order_key(), $key ) || 'completed' !== $order->get_status() || ! in_array( $vendor_id, restocommerce_vendor_order_vendor_ids( $order ), true ) ) { wp_send_json_error( array( 'message' => __( 'Cet avis ne peut pas être associé à cette commande.', 'restocommerce' ) ), 403 ); }
+	if ( restocommerce_vendor_order_has_review( $order, $vendor_id ) ) { wp_send_json_error( array( 'message' => __( 'Un avis a déjà été enregistré pour ce restaurant et cette commande.', 'restocommerce' ) ), 409 ); }
+	if ( $rating < 1 || $rating > 5 || '' === $content ) { wp_send_json_error( array( 'message' => __( 'Choisissez une note et écrivez votre retour.', 'restocommerce' ) ), 422 ); }
+	$comment_id = wp_insert_comment( array( 'comment_post_ID' => $order->get_id(), 'comment_content' => $content, 'comment_type' => 'restocommerce_vendor_review', 'comment_approved' => 1, 'comment_author' => __( 'Client vérifié', 'restocommerce' ), 'user_id' => get_current_user_id() ) );
+	if ( ! $comment_id ) { wp_send_json_error( array( 'message' => __( 'Votre avis ne peut pas être enregistré pour le moment.', 'restocommerce' ) ), 500 ); }
+	update_comment_meta( $comment_id, 'restocommerce_vendor_review_vendor_id', $vendor_id );
+	update_comment_meta( $comment_id, 'restocommerce_vendor_review_order_id', $order->get_id() );
+	update_comment_meta( $comment_id, 'restocommerce_vendor_review_rating', $rating );
+	update_comment_meta( $comment_id, 'restocommerce_vendor_review_verified', 'yes' );
+	wp_send_json_success( array( 'message' => __( 'Merci. Votre avis vérifié a été publié.', 'restocommerce' ) ) );
+}
+add_action( 'wp_ajax_restocommerce_submit_vendor_review', 'restocommerce_ajax_submit_vendor_review' );
+add_action( 'wp_ajax_nopriv_restocommerce_submit_vendor_review', 'restocommerce_ajax_submit_vendor_review' );
+
+function restocommerce_render_vendor_review_form( $order_id ) : void {
+	$order = function_exists( 'wc_get_order' ) ? wc_get_order( $order_id ) : false;
+	if ( ! $order instanceof WC_Order || ! restocommerce_order_tracking_has_valid_key( $order ) || 'completed' !== $order->get_status() ) { return; }
+	$vendor_ids = array_filter( restocommerce_vendor_order_vendor_ids( $order ), static function( int $vendor_id ) use ( $order ) : bool { return ! restocommerce_vendor_order_has_review( $order, $vendor_id ); } );
+	if ( ! $vendor_ids ) { return; }
+	?>
+	<section class="rc-order-review" aria-labelledby="rc-order-review-title"><header><p><?php esc_html_e( 'Votre retour', 'restocommerce' ); ?></p><h2 id="rc-order-review-title"><?php esc_html_e( 'Comment était votre expérience ?', 'restocommerce' ); ?></h2><span><?php esc_html_e( 'Votre avis est lié à cette commande terminée.', 'restocommerce' ); ?></span></header><?php foreach ( $vendor_ids as $vendor_id ) : ?><form data-rc-vendor-review><input type="hidden" name="order_id" value="<?php echo esc_attr( (string) $order->get_id() ); ?>"><input type="hidden" name="order_key" value="<?php echo esc_attr( $order->get_order_key() ); ?>"><input type="hidden" name="vendor_id" value="<?php echo esc_attr( (string) $vendor_id ); ?>"><h3><?php echo esc_html( restocommerce_vendor_store_name( $vendor_id ) ); ?></h3><fieldset><legend><?php esc_html_e( 'Votre note', 'restocommerce' ); ?></legend><div class="rc-order-review-rating"><?php for ( $rating = 5; $rating >= 1; --$rating ) : ?><label><input type="radio" name="rating" value="<?php echo esc_attr( (string) $rating ); ?>"> <span><?php echo esc_html( sprintf( _n( '%d étoile', '%d étoiles', $rating, 'restocommerce' ), $rating ) ); ?></span></label><?php endfor; ?></div></fieldset><label class="rc-order-review-copy"><span><?php esc_html_e( 'Votre retour', 'restocommerce' ); ?></span><textarea name="content" rows="4" maxlength="1200" required></textarea></label><button type="submit"><?php esc_html_e( 'Publier mon avis vérifié', 'restocommerce' ); ?></button><p data-rc-review-feedback role="status" aria-live="polite"></p></form><?php endforeach; ?></section>
+	<?php
+}
+add_action( 'woocommerce_thankyou', 'restocommerce_render_vendor_review_form', 30 );
+
 function restocommerce_preload_lcp_image() : void { if ( ! is_front_page() || ! has_post_thumbnail( get_queried_object_id() ) ) { return; } $image = wp_get_attachment_image_url( get_post_thumbnail_id( get_queried_object_id() ), 'full' ); if ( $image ) { printf( "<link rel='preload' as='image' href='%s' fetchpriority='high'>\n", esc_url( $image ) ); } }
 add_action( 'wp_head', 'restocommerce_preload_lcp_image', 1 );
 function restocommerce_restaurant_schema() : void { if ( ! is_front_page() ) { return; } printf( "<script type='application/ld+json'>%s</script>\n", wp_json_encode( array( '@context' => 'https://schema.org', '@type' => 'Restaurant', 'name' => get_bloginfo( 'name' ), 'url' => home_url( '/' ) ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) ); }
@@ -569,25 +926,96 @@ function restocommerce_dynamic_urls() : array { return class_exists( 'WooCommerc
 function restocommerce_store_slug_from_request() : string {
 	$path = trim( (string) wp_parse_url( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) ), PHP_URL_PATH ), '/' );
 	$parts = explode( '/', $path );
-	return ( isset( $parts[0], $parts[1] ) && 'restaurant' === $parts[0] ) ? sanitize_title( $parts[1] ) : '';
+	return ( isset( $parts[0], $parts[1] ) && in_array( $parts[0], array( 'restaurant', 'store' ), true ) ) ? sanitize_title( $parts[1] ) : '';
+}
+function restocommerce_store_request_uses_legacy_wcfm_route() : bool {
+	$path = trim( (string) wp_parse_url( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) ), PHP_URL_PATH ), '/' );
+	return 0 === strpos( $path, 'store/' );
 }
 function restocommerce_current_store_vendor() : ?WP_User {
 	static $vendor = null; static $checked = false;
 	if ( $checked ) { return $vendor; } $checked = true; $slug = restocommerce_store_slug_from_request();
 	if ( ! $slug ) { return null; }
-	$vendor = get_user_by( 'login', $slug );
-	if ( ! $vendor ) { $vendor = get_user_by( 'slug', $slug ); }
+	$vendor = get_user_by( 'slug', $slug );
+	if ( ! $vendor ) { $vendor = get_user_by( 'login', $slug ); }
 	return $vendor instanceof WP_User ? $vendor : null;
 }
+/** Direction « Le Comptoir Éditorial » : précharger la candidate responsive qui sera réellement choisie pour le héros, jamais le PNG source pleine taille. */
+function restocommerce_preload_storefront_responsive_hero() : void {
+	$vendor = restocommerce_current_store_vendor();
+	if ( ! $vendor ) { return; }
+	$profile = (array) get_user_meta( (int) $vendor->ID, 'wcfmmp_profile_settings', true );
+	$image_id = absint( $profile['banner'] ?? $profile['list_banner'] ?? 0 );
+	if ( ! $image_id && function_exists( 'restocommerce_vendor_products' ) ) {
+		$products = restocommerce_vendor_products( (int) $vendor->ID );
+		if ( ! empty( $products[0] ) ) { $image_id = (int) get_post_thumbnail_id( $products[0]->get_id() ); }
+	}
+	if ( ! $image_id ) { return; }
+	$href = wp_get_attachment_image_url( $image_id, 'medium_large' );
+	$srcset = wp_get_attachment_image_srcset( $image_id, 'full' );
+	if ( ! $href ) { return; }
+	printf(
+		"<link rel='preload' as='image' href='%1\$s' imagesrcset='%2\$s' imagesizes='100vw' fetchpriority='high'>\n",
+		esc_url( $href ),
+		esc_attr( $srcset ?: '' )
+	);
+}
+add_action( 'wp_head', 'restocommerce_preload_storefront_responsive_hero', 2 );
 function restocommerce_vendor_products( int $vendor_id, int $exclude_product_id = 0 ) : array {
 	if ( ! class_exists( 'WooCommerce' ) || ! $vendor_id ) { return array(); }
 	$ids = get_posts( array( 'post_type' => 'product', 'post_status' => 'publish', 'author' => $vendor_id, 'posts_per_page' => -1, 'post__not_in' => $exclude_product_id ? array( $exclude_product_id ) : array(), 'fields' => 'ids', 'orderby' => 'menu_order date', 'order' => 'DESC' ) );
 	return array_values( array_filter( array_map( static function( $id ) use ( $vendor_id ) { $terms = get_the_terms( $id, 'product_cat' ); if ( $terms && ! is_wp_error( $terms ) ) { foreach ( $terms as $term ) { if ( ! restocommerce_vendor_category_is_enabled( $vendor_id, (int) $term->term_id ) ) { return null; } } } return wc_get_product( $id ); }, $ids ) ) );
 }
-function restocommerce_store_url_for_vendor( WP_User $vendor ) : string { return home_url( '/restaurant/' . rawurlencode( $vendor->user_login ) . '/' ); }
+function restocommerce_store_url_for_vendor( WP_User $vendor ) : string { return home_url( '/restaurant/' . rawurlencode( $vendor->user_nicename ?: $vendor->user_login ) . '/' ); }
+/** Les slugs qui ne correspondent à aucun compte ne doivent jamais atteindre le routeur WCFM. */
+add_action( 'parse_request', function() : void {
+	$slug = restocommerce_store_slug_from_request();
+	if ( ! $slug || get_user_by( 'slug', $slug ) || get_user_by( 'login', $slug ) ) { return; }
+	status_header( 404 );
+	nocache_headers();
+	header( 'Content-Type: text/html; charset=' . get_bloginfo( 'charset' ) );
+	echo '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><title>' . esc_html__( 'Restaurant introuvable', 'restocommerce' ) . '</title><style>body{margin:0;background:#f7f3eb;color:#173f35;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.rc-page-not-found{box-sizing:border-box;min-height:100vh;display:grid;place-items:center;padding:24px}.rc-ui-state{max-width:640px;padding:clamp(32px,8vw,72px);background:#fffdf8;border:1px solid #d7cdbd;box-shadow:0 18px 50px rgba(23,63,53,.12)}.rc-eyebrow{margin:0 0 16px;color:#853725;font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.rc-ui-state h1{margin:0;font-family:Georgia,serif;font-size:clamp(2rem,7vw,4.25rem);line-height:1.02}.rc-ui-state p:not(.rc-eyebrow){margin:20px 0 0;max-width:44ch;line-height:1.6}.rc-ui-state-action{display:inline-block;margin-top:28px;padding:13px 18px;background:#173f35;color:#fffdf8;font-weight:800;text-decoration:none}.rc-ui-state-action:focus-visible{outline:3px solid #853725;outline-offset:4px}</style></head><body><main class="rc-page-content rc-page-not-found"><section class="rc-ui-state rc-ui-state--error"><p class="rc-eyebrow">' . esc_html__( 'Restaurant introuvable', 'restocommerce' ) . '</p><h1>' . esc_html__( 'Cette table est introuvable.', 'restocommerce' ) . '</h1><p>' . esc_html__( 'Elle a peut-être changé d’adresse. Découvrez les autres restaurants du quartier.', 'restocommerce' ) . '</p><a class="rc-ui-state-action" href="' . esc_url( home_url( '/#restaurants' ) ) . '">' . esc_html__( 'Voir les restaurants', 'restocommerce' ) . '</a></section></main></body></html>';
+	exit;
+}, 0 );
+/** Route publique non résolue : répondre avant le routeur WCFM, avec un vrai statut 404 plutôt qu’une erreur serveur. */
+add_action( 'template_redirect', function() : void {
+	if ( ! restocommerce_store_slug_from_request() || restocommerce_current_store_vendor() ) { return; }
+	global $wp_query;
+	if ( $wp_query instanceof WP_Query ) { $wp_query->set_404(); }
+	status_header( 404 );
+	nocache_headers();
+	get_header();
+	echo '<main class="rc-page-content rc-page-not-found"><section class="rc-ui-state rc-ui-state--error"><div><span class="rc-ui-state-mark" aria-hidden="true">!</span><p class="rc-eyebrow">' . esc_html__( 'Restaurant introuvable', 'restocommerce' ) . '</p><h1>' . esc_html__( 'Cette table est introuvable.', 'restocommerce' ) . '</h1><p>' . esc_html__( 'Elle a peut-être changé d’adresse. Découvrez les autres restaurants du quartier.', 'restocommerce' ) . '</p><a class="rc-ui-state-action" href="' . esc_url( home_url( '/#restaurants' ) ) . '">' . esc_html__( 'Voir les restaurants', 'restocommerce' ) . '</a></div></section></main>';
+	get_footer();
+	exit;
+}, 0 );
+add_action( 'template_redirect', function() : void {
+	if ( ! restocommerce_store_request_uses_legacy_wcfm_route() ) { return; }
+	$vendor = restocommerce_current_store_vendor();
+	if ( ! $vendor ) { return; }
+	wp_safe_redirect( restocommerce_store_url_for_vendor( $vendor ), 301 );
+	exit;
+}, 1 );
+add_filter( 'pre_get_document_title', function( string $title ) : string {
+	$vendor = restocommerce_current_store_vendor();
+	if ( ! $vendor ) { return $title; }
+	$cuisine = sanitize_text_field( (string) get_user_meta( (int) $vendor->ID, 'restocommerce_cuisine', true ) );
+	$label = restocommerce_vendor_store_name( (int) $vendor->ID ) . ( $cuisine ? ' — ' . $cuisine : '' );
+	return $label . ' | ' . get_bloginfo( 'name' );
+} );
+add_action( 'wp_head', function() : void {
+	$vendor = restocommerce_current_store_vendor();
+	if ( ! $vendor ) { return; }
+	$profile = (array) get_user_meta( (int) $vendor->ID, 'wcfmmp_profile_settings', true );
+	$description = sanitize_textarea_field( (string) ( $profile['description'] ?? get_user_meta( (int) $vendor->ID, 'restocommerce_store_description', true ) ?? '' ) );
+	printf( "<link rel='canonical' href='%s'>\n", esc_url( restocommerce_store_url_for_vendor( $vendor ) ) );
+	if ( $description ) { printf( "<meta name='description' content='%s'>\n", esc_attr( wp_trim_words( $description, 28, '' ) ) ); }
+}, 1 );
 add_filter( 'template_include', function( string $template ) : string {
 	if ( restocommerce_is_vendor_dashboard_home() ) { return get_template_directory() . '/vendor-dashboard.php'; }
-	if ( restocommerce_current_store_vendor() ) { return get_template_directory() . '/storefront.php'; }
+	$store_vendor = restocommerce_current_store_vendor();
+	if ( $store_vendor ) { global $wp_query; if ( $wp_query instanceof WP_Query ) { $wp_query->is_404 = false; } status_header( 200 ); return get_template_directory() . '/storefront.php'; }
+	if ( restocommerce_store_slug_from_request() ) { global $wp_query; if ( $wp_query instanceof WP_Query ) { $wp_query->set_404(); } status_header( 404 ); return $template; }
 	if ( is_product() ) { return get_template_directory() . '/single-product.php'; }
 	return $template;
 }, 99 );

@@ -15,7 +15,8 @@
     "qa:axe:home": "node scripts/inspect-axe-home.mjs",
     "qa:axe:store": "node scripts/inspect-axe-store.mjs",
     "qa:lot1": "node scripts/run-lot-1-receipt.mjs",
-    "qa:lot1:baseline": "node scripts/run-lot-1-receipt.mjs --update-baseline"
+    "qa:lot1:baseline": "node scripts/run-lot-1-receipt.mjs --update-baseline",
+    "qa:routes": "node scripts/run-route-regression.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

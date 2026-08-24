@@ -18,10 +18,16 @@ $cuisine    = (string) get_user_meta( $vendor->ID, 'restocommerce_cuisine', true
 $hero_title = (string) get_user_meta( $vendor->ID, 'restocommerce_hero_title', true );
 $phone      = $profile['mobile'] ?? $profile['phone'] ?? '';
 $banner_id  = absint( $profile['banner'] ?? $profile['list_banner'] ?? 0 );
+$hours      = get_user_meta( $vendor->ID, 'restocommerce_store_hours', true );
+$hours      = is_array( $hours ) ? $hours : ( is_array( $profile['store_hours'] ?? null ) ? $profile['store_hours'] : array() );
+$hours_line = ! empty( $hours['open'] ) && ! empty( $hours['close'] ) ? sprintf( __( '%1$s – %2$s', 'restocommerce' ), $hours['open'], $hours['close'] ) : '';
 $products   = restocommerce_vendor_products( (int) $vendor->ID );
 $is_paused  = restocommerce_vendor_service_is_paused( (int) $vendor->ID );
-$hero_image = $banner_id ? wp_get_attachment_image_url( $banner_id, 'full' ) : '';
-if ( ! $hero_image && $products ) { $hero_image = get_the_post_thumbnail_url( $products[0]->get_id(), 'full' ); }
+$review_summary = function_exists( 'restocommerce_vendor_review_summary' ) ? restocommerce_vendor_review_summary( (int) $vendor->ID ) : array( 'count' => 0, 'average' => 0.0 );
+$hero_attachment_id = $banner_id;
+if ( ! $hero_attachment_id && $products ) { $hero_attachment_id = (int) get_post_thumbnail_id( $products[0]->get_id() ); }
+$hero_image = $hero_attachment_id ? wp_get_attachment_image_url( $hero_attachment_id, 'full' ) : '';
+$hero_media = $hero_attachment_id ? wp_get_attachment_image( $hero_attachment_id, 'full', false, array( 'class' => 'rc-store-hero-media', 'alt' => '', 'aria-hidden' => 'true', 'fetchpriority' => 'high', 'loading' => 'eager', 'decoding' => 'sync', 'sizes' => '100vw' ) ) : '';
 
 $groups = array();
 foreach ( $products as $menu_product ) {
@@ -33,14 +39,16 @@ foreach ( $products as $menu_product ) {
 get_header();
 ?>
 <main class="rc-storefront">
-		<section class="rc-store-hero<?php echo $is_paused ? ' rc-store-hero--paused' : ''; ?>"<?php if ( $hero_image ) : ?> style="--rc-store-hero:url('<?php echo esc_url( $hero_image ); ?>')"<?php endif; ?>>
+		<section class="rc-store-hero<?php echo $is_paused ? ' rc-store-hero--paused' : ''; ?>">
+			<?php echo $hero_media; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML généré exclusivement par wp_get_attachment_image(). ?>
 		<div class="rc-store-hero-wash" aria-hidden="true"></div><span class="rc-store-hero-orbit" aria-hidden="true"></span>
 		<div class="rc-wrap rc-store-hero-inner">
 			<div class="rc-store-hero-copy">
 					<p class="rc-store-open"><i aria-hidden="true"></i><?php echo esc_html( $is_paused ? __( 'Les commandes sont en pause', 'restocommerce' ) : __( 'Ouvert aujourd’hui', 'restocommerce' ) ); ?></p>
 				<p class="rc-eyebrow"><?php echo esc_html( $store_name . ( $cuisine ? ' · ' . $cuisine : '' ) ); ?></p>
 					<h1><?php echo esc_html( $hero_title ?: __( 'Le bon dîner commence ici.', 'restocommerce' ) ); ?></h1>
-				<p class="rc-store-description"><?php echo esc_html( $description ?: __( 'Des assiettes généreuses, faites au rythme de la saison. Commandez simplement, puis échangez directement avec notre équipe.', 'restocommerce' ) ); ?></p>
+					<p class="rc-store-description"><?php echo esc_html( $description ?: __( 'Des assiettes généreuses, faites au rythme de la saison. Commandez simplement, puis échangez directement avec notre équipe.', 'restocommerce' ) ); ?></p>
+					<?php if ( ! empty( $review_summary['count'] ) ) : ?><p class="rc-store-review-summary"><strong aria-label="<?php echo esc_attr( sprintf( __( 'Note moyenne %1$s sur 5', 'restocommerce' ), $review_summary['average'] ) ); ?>">★ <?php echo esc_html( number_format_i18n( (float) $review_summary['average'], 1 ) ); ?></strong><span><?php echo esc_html( sprintf( _n( '%d avis vérifié', '%d avis vérifiés', (int) $review_summary['count'], 'restocommerce' ), (int) $review_summary['count'] ) ); ?></span></p><?php endif; ?>
 					<div class="rc-store-hero-actions"><?php if ( $is_paused ) : ?><span class="rc-store-hero-paused-message"><?php esc_html_e( 'La carte reste visible, mais les nouvelles commandes reprendront lorsque le restaurant sera ouvert.', 'restocommerce' ); ?></span><?php else : ?><a class="rc-store-hero-button" href="#menu"><?php esc_html_e( 'Ouvrir la carte', 'restocommerce' ); ?><span aria-hidden="true">→</span></a><span><?php esc_html_e( 'Panier rapide, confirmation sur WhatsApp.', 'restocommerce' ); ?></span><?php endif; ?></div>
 			</div>
 			<aside class="rc-store-hero-note"><span><?php esc_html_e( 'La maison du jour', 'restocommerce' ); ?></span><strong><?php echo esc_html( $city ?: __( 'À proximité', 'restocommerce' ) ); ?></strong><p><?php esc_html_e( 'Une carte courte, des choix simples, un échange direct avec la cuisine.', 'restocommerce' ); ?></p></aside>
@@ -64,7 +72,7 @@ get_header();
 		</div>
 	</section>
 
-	<section id="infos" class="rc-store-info rc-store-info--after-menu"><div class="rc-wrap rc-store-info-grid"><article><b><?php esc_html_e( 'Adresse', 'restocommerce' ); ?></b><p><?php echo esc_html( trim( $street . ( $city ? ', ' . $city : '' ) ) ?: __( 'Adresse communiquée après commande', 'restocommerce' ) ); ?></p></article><article><b><?php esc_html_e( 'Cuisine', 'restocommerce' ); ?></b><p><?php echo esc_html( $cuisine ?: __( 'Carte du restaurant', 'restocommerce' ) ); ?></p></article><article><b><?php esc_html_e( 'Commande', 'restocommerce' ); ?></b><p><?php esc_html_e( 'Ajoutez vos plats, puis finalisez avec le restaurant.', 'restocommerce' ); ?></p></article><?php if ( $phone ) : ?><a href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $phone ) ); ?>" class="rc-store-contact"><?php esc_html_e( 'Contacter la maison', 'restocommerce' ); ?><span aria-hidden="true">↗</span></a><?php endif; ?></div></section>
+		<section id="infos" class="rc-store-info rc-store-info--after-menu"><div class="rc-wrap rc-store-info-grid"><article><b><?php esc_html_e( 'Adresse', 'restocommerce' ); ?></b><p><?php echo esc_html( trim( $street . ( $city ? ', ' . $city : '' ) ) ?: __( 'Adresse communiquée après commande', 'restocommerce' ) ); ?></p></article><article><b><?php esc_html_e( 'Cuisine', 'restocommerce' ); ?></b><p><?php echo esc_html( $cuisine ?: __( 'Carte du restaurant', 'restocommerce' ) ); ?></p></article><?php if ( $hours_line ) : ?><article><b><?php esc_html_e( 'Horaires', 'restocommerce' ); ?></b><p><?php echo esc_html( $hours_line ); ?></p></article><?php endif; ?><article><b><?php esc_html_e( 'Commande', 'restocommerce' ); ?></b><p><?php esc_html_e( 'Ajoutez vos plats, puis finalisez avec le restaurant.', 'restocommerce' ); ?></p></article><?php if ( $phone ) : ?><a href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $phone ) ); ?>" class="rc-store-contact"><?php esc_html_e( 'Contacter la maison', 'restocommerce' ); ?><span aria-hidden="true">↗</span></a><?php endif; ?></div></section>
 	<section class="rc-wrap rc-store-closing"><div><p class="rc-eyebrow"><?php esc_html_e( 'Retrait ou livraison', 'restocommerce' ); ?></p><h2><?php esc_html_e( 'Votre table préférée, prête à emporter.', 'restocommerce' ); ?></h2></div><button type="button" data-rc-open-cart><?php esc_html_e( 'Préparer ma commande', 'restocommerce' ); ?><span aria-hidden="true">→</span></button></section>
 </main>
 <?php get_footer();
