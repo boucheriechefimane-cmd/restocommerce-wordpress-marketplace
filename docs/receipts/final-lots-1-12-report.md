@@ -2,7 +2,7 @@
 
 **Date :** 24 août 2026  
 **Staging :** WordPress / WooCommerce / WCFM  
-**Thème actif vérifié :** RestoCommerce 2.7.4  
+**Thème actif vérifié :** RestoCommerce 2.7.5  
 **Extensions métier actives de référence :** RestoCommerce Core 0.1.2, WhatsApp Checkout 0.1.2 et WCFM Bridge 0.1.2.
 
 ## Cadre de livraison
@@ -30,13 +30,13 @@ Le tableau ci-dessous distingue explicitement une fonction **déployée**, une p
 
 ### Lots 1 à 3 : fondations conservées, non surdéclarées
 
-Le socle canonique, l’assistant produit et l’onboarding persistent restent déployés. Les rapports spécifiques conservent leurs limites : l’absence de variables vendeur portables interdit de déclarer la recette connectée achevée. La dernière optimisation de performance antérieure à cette passe mesurait environ **85** en Performance et un LCP d’environ **2,9 s** sur le storefront ; l’objectif CDC de Performance ≥90 ne peut donc pas être déclaré atteint.
+Le socle canonique, l’assistant produit et l’onboarding persistent restent déployés. Les rapports spécifiques conservent leurs limites : l’absence de variables vendeur portables interdit de déclarer la recette connectée achevée. La campagne renforcée 2.7.5 a obtenu une passe marketplace à 96, mais aussi une seconde à 85, tandis que la fiche restaurant a obtenu 89 puis 85. L’objectif CDC de Performance ≥90 ne peut donc pas être déclaré atteint de façon reproductible.
 
 ### Lots 4 à 9 : cockpit, service et données réelles
 
 Le cockpit comprend maintenant le tour de première prise en main, une aide toujours disponible, des notifications rattachées aux événements WooCommerce, le suivi public à partir de la clé de commande native, les avis uniquement après commande terminée, les analyses fondées sur les lignes réellement vendues et les palettes opt-in par restaurant. Les métadonnées de préférence, de notification, de signalement et de palette sont additives et limitées au restaurateur concerné. Aucune donnée de démonstration n’est introduite dans les avis, les notes, les ventes ou les tendances.
 
-La version finale 2.7.4 ajoute un correctif de contraste public pour deux CTA de la fiche restaurant. Il charge une feuille ciblée seulement sur storefront ou produit et impose une encre claire sur les surfaces terre cuite concernées, y compris sous palette active.
+La version 2.7.4 ajoute un correctif de contraste public pour deux CTA de la fiche restaurant. La version finale 2.7.5 décharge en outre sur la marketplace les feuilles WooCommerce, WCFM et Hostinger inutiles relevées par Lighthouse, sans modifier le panier, le checkout ni les données métier.
 
 ### Lots 10 et 11 : règles et décision de paiement
 
@@ -86,5 +86,4 @@ La validation humaine du téléphone réel reste due. La décision de paiement r
 
 ## Documents associés
 
-Les preuves par lot sont regroupées dans `docs/receipts/lot-1-correction-report.md` à `docs/receipts/lot-12-report.md`. Le présent fichier est le rapport de synthèse unique ; les artefacts bruts restent exclus du dépôt public.
-
+Les preuves par lot sont regroupées dans `docs/receipts/lot-1-correction-report.md` à `docs/receipts/lot-12-report.md`. La campagne complémentaire est décrite dans `docs/receipts/verification-renforcee-report.md`. Le présent fichier est le rapport de synthèse unique ; les artefacts bruts restent exclus du dépôt public.

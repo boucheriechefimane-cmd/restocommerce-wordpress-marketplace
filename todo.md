@@ -379,3 +379,10 @@
 
 # Publication GitHub de l’export public
 - [x] Vérifier l’authentification GitHub reconnectée et publier le commit public assaini `6866cde` vers la branche principale.
+
+# Campagne de vérification renforcée
+- [x] Inventorier et préparer les outils sandbox de qualité, sécurité, accessibilité, visualisation et performance.
+- [x] Exécuter des contrôles statiques et de dépendances non intrusifs sur les sources publiques.
+- [x] Rejouer les routes publiques, axe, navigation clavier et rendus multi-moteurs sans session vendeur.
+- [x] Refaire les mesures de performance publique et le contrôle des palettes ; documenter chaque limite qui exige un compte vendeur ou un appareil physique.
+- [x] Produire un verdict de conformité factuel et ne corriger que les écarts sûrs ne modifiant aucune donnée métier.

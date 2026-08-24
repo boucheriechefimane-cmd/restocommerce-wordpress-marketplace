@@ -358,6 +358,14 @@ function restocommerce_dequeue_public_legacy_styles() : void {
 }
 add_action( 'wp_enqueue_scripts', 'restocommerce_dequeue_public_legacy_styles', 1000 );
 
+/** Direction « Le Comptoir Éditorial » : la marketplace utilise ses propres cartes et panier ; les feuilles historiques ne sont pas nécessaires à son premier rendu. */
+function restocommerce_dequeue_marketplace_legacy_styles() : void {
+	if ( ! is_front_page() ) { return; }
+	$styles = array( 'wc-blocks-style', 'woocommerce-layout', 'woocommerce-smallscreen', 'woocommerce-general', 'hostinger-reach-subscription-block', 'jquery-ui-style', 'wcfm_fa_icon_css', 'wcfm_core_css', 'wcfm-leaflet-map-style', 'wcfm-leaflet-search-style', 'select2_css', 'wcfmmp_store_css', 'wcfmmp_store_responsive_css' );
+	foreach ( $styles as $handle ) { wp_dequeue_style( $handle ); }
+}
+add_action( 'wp_enqueue_scripts', 'restocommerce_dequeue_marketplace_legacy_styles', 1000 );
+
 function restocommerce_enqueue_storefront_contrast_hotfix() : void {
 	if ( ! restocommerce_current_store_vendor() && ! is_product() ) { return; }
 	wp_enqueue_style( 'restocommerce-storefront-contrast-hotfix', get_template_directory_uri() . '/assets/css/storefront-contrast-hotfix.css', array( 'restocommerce-vendor-palettes-public' ), restocommerce_asset_version( '/assets/css/storefront-contrast-hotfix.css' ) );
