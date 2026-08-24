@@ -376,3 +376,6 @@
 - [x] Corriger puis redéployer le contraste public détecté par axe en RestoCommerce 2.7.4.
 - [x] Produire le rapport global factuel `docs/receipts/final-lots-1-12-report.md`.
 - [ ] Compléter les preuves métier connectées, téléphone réel, décision de paiement et objectif Performance ≥90 avant toute déclaration de conformité CDC complète.
+
+# Publication GitHub de l’export public
+- [x] Vérifier l’authentification GitHub reconnectée et publier le commit public assaini `6866cde` vers la branche principale.
