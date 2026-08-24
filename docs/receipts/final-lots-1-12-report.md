@@ -2,88 +2,47 @@
 
 **Date :** 24 août 2026  
 **Staging :** WordPress / WooCommerce / WCFM  
-**Thème actif vérifié :** RestoCommerce 2.7.5  
-**Extensions métier actives de référence :** RestoCommerce Core 0.1.2, WhatsApp Checkout 0.1.2 et WCFM Bridge 0.1.2.
+**Thème actif contrôlé :** RestoCommerce **2.7.13**
+**Révision publique :** synchronisation GitHub à effectuer après l’audit sanitaire final ; aucun SHA distant non vérifié n’est déclaré dans ce rapport.
 
-## Cadre de livraison
+## Règle de lecture
 
-Les Lots 4 à 12 ont été traités dans l’ordre demandé après les corrections documentées des Lots 1 à 3. La règle de conservation a été respectée : cette passe n’a supprimé, désactivé, archivé, réinitialisé ou altéré aucun compte, produit, média, commande, avis, contenu de test ou extension du staging. Les remplacements de thème ont été effectués via le mécanisme WordPress, puis suivis d’une purge LiteSpeed.
+> Un statut **connecté vérifié** signifie qu’une action réelle a été effectuée sur des données de recette isolées, puis restaurée ou nettoyée lorsque le scénario le permet. Il ne vaut pas certification globale lorsque subsistent des limites de performance, d’appareil physique ou de décision métier.
 
-Le tableau ci-dessous distingue explicitement une fonction **déployée**, une preuve **partielle** et un élément **en attente**. Un statut déployé ne signifie pas qu’une recette métier connectée a été réussie lorsque les accès nécessaires n’étaient pas disponibles.
-
-| Lot | Livraison | Contrôles disponibles | Statut final |
+| Lot | Livraison | Preuve disponible | Statut factuel |
 |---:|---|---|---|
-| 1 | Routes `/restaurant/{slug}/`, redirection legacy et 404 éditoriale | Matrice antérieure ; régression finale publique sans bloqueur | **Partiel** : cockpit connecté à rejouer |
-| 2 | Assistant produit sans reload, idempotence et actualisation du menu | Syntaxe et contrôles antérieurs | **Partiel** : publication connectée à rejouer |
-| 3 | Onboarding persistant, validation média/téléphone et profils | Contrôles antérieurs de source et de distribution | **Partiel** : reprise, téléphone réel et session expirée à rejouer |
-| 4 | Tour trois étapes, aide contextuelle et support WhatsApp résolu | Syntaxe, invariants et distribution 2.6.0 | **Déployé, preuve connectée due** |
-| 5 | Centre d’alertes vendeur, préférences son/vibration, rafraîchissement sans reload | Syntaxe, invariants et distribution 2.6.3 | **Déployé, événement de commande réel dû** |
-| 6 | Suivi au reçu WooCommerce, clé native, états cuisine et lien WhatsApp conditionnel | Syntaxe, garde de clé et distribution 2.7.0 | **Déployé, reçu réel dû** |
-| 7 | Avis vérifiés après commande terminée, résumé réel et signalement additif | Syntaxe, propriété et distribution 2.7.1 | **Déployé, commande terminée réelle due** |
-| 8 | Cartes d’analyse fondées sur lignes WooCommerce réelles | Syntaxe, invariants de propriété et distribution 2.7.2 | **Déployé, rapprochement chiffré dû** |
-| 9 | Quatre palettes par restaurant, persistance opt-in et contraste nominal | Script de contraste, syntaxe et distribution 2.7.3 | **Déployé, rendu connecté dû** |
-| 10 | Système de design public complet | Inventaire et contrôle d’assainissement documentaire | **Documenté** |
-| 11 | Recommandation checkout, sans code paiement | Sources officielles et contrôle d’absence de secrets | **Décision métier en attente** |
-| 12 | Recette mobile dégradée publique et ajout panier isolé | Exécution Chromium réussie | **Partiel** : téléphone réel et cockpit vendeur dus |
+| 1 | Routes, accessibilité et cockpit vendeur | Matrice connectée Chromium / Firefox / WebKit, 4 formats, axe, focus, tabs et restauration service | **Connecté vérifié pour le périmètre testé** |
+| 2 | Wizard produit, options et actualisation de menu | Création, rendu public, limites UI/serveur, duplication, bibliothèque, isolation, archive et 404 | **Connecté vérifié pour le périmètre testé** |
+| 3 | Onboarding persistant et publication boutique | Déployé ; recette de persistance complète à rejouer | **Partiel** |
+| 4 | Tour et aide vendeur | Déployé | **Déployé, preuve connectée étendue due** |
+| 5 | Notifications vendeur | Déployé | **Déployé, événement de commande réel dû** |
+| 6 | Suivi public de commande | Déployé | **Déployé, reçu réel dû** |
+| 7 | Avis vérifiés et modération | Déployé | **Déployé, commande terminée réelle due** |
+| 8 | Analyses vendeur | Déployé | **Déployé, rapprochement chiffré dû** |
+| 9 | Palettes par restaurant | Déployé | **Déployé, isolation connectée due** |
+| 10 | Système de design | Documenté | **Documenté** |
+| 11 | Décision checkout | Documentée, sans paiement | **Décision métier en attente** |
+| 12 | Parcours public dégradé | Recette navigateur simulée | **Partiel : téléphone réel et cockpit dus** |
 
-## Éléments livrés par lot
+## Actualisation Lots 1 et 2
 
-### Lots 1 à 3 : fondations conservées, non surdéclarées
+Le Lot 1 a été rejoué en session vendeur réelle sur les trois moteurs aux quatre formats CDC. Aucune violation axe n’a été observée dans la matrice finale ; le focus est discernable, les onglets cockpit sont présents et la bascule de service est restaurée. Un incident transitoire de redirection WordPress a été isolé par reprise et reste distingué des résultats fonctionnels.[1]
 
-Le socle canonique, l’assistant produit et l’onboarding persistent restent déployés. Les rapports spécifiques conservent leurs limites : l’absence de variables vendeur portables interdit de déclarer la recette connectée achevée. La campagne renforcée 2.7.5 a obtenu une passe marketplace à 96, mais aussi une seconde à 85, tandis que la fiche restaurant a obtenu 89 puis 85. L’objectif CDC de Performance ≥90 ne peut donc pas être déclaré atteint de façon reproductible.
+Le Lot 2 a créé puis archivé des plats de recette. La règle Sauce maximum deux est imposée à la fois dans l’interface et côté serveur. La duplication, la bibliothèque et le rendu public ont été observés. Les défenses sans nonce et inter-vendeur ont été contrôlées sans modifier de données préexistantes ; les fixtures archivées ne sont plus accessibles publiquement.[2]
 
-### Lots 4 à 9 : cockpit, service et données réelles
+## Écarts et décisions encore ouverts
 
-Le cockpit comprend maintenant le tour de première prise en main, une aide toujours disponible, des notifications rattachées aux événements WooCommerce, le suivi public à partir de la clé de commande native, les avis uniquement après commande terminée, les analyses fondées sur les lignes réellement vendues et les palettes opt-in par restaurant. Les métadonnées de préférence, de notification, de signalement et de palette sont additives et limitées au restaurateur concerné. Aucune donnée de démonstration n’est introduite dans les avis, les notes, les ventes ou les tendances.
-
-La version 2.7.4 ajoute un correctif de contraste public pour deux CTA de la fiche restaurant. La version finale 2.7.5 décharge en outre sur la marketplace les feuilles WooCommerce, WCFM et Hostinger inutiles relevées par Lighthouse, sans modifier le panier, le checkout ni les données métier.
-
-### Lots 10 et 11 : règles et décision de paiement
-
-Le système de design est disponible dans `docs/DESIGN-SYSTEM.md`. Il couvre les tokens, les palettes, la typographie, la cadence, les composants publics, le cockpit, les boutons, les cartes, les pills, les badges, les icônes, le focus, le clavier, le contraste, le mouvement et les états sans donnée.
-
-La recommandation checkout est disponible dans `docs/CHECKOUT-DECISION.md`. Elle conserve le parcours WhatsApp et le suivi Lot 6, et recommande de ne pas intégrer de paiement tant que le responsable métier n’a pas validé le pays, la devise, l’entité encaissante, les reversements vendeurs, les moyens acceptés et la passerelle. Aucun secret, aucune passerelle, aucune carte et aucune transaction réelle n’ont été configurés.
-
-### Lot 12 : parcours public sous contrainte
-
-Une recette Chromium a simulé un viewport 390 × 844, une latence de 150 ms, 1,6 Mbps en descendant et un CPU ralenti ×4. Les trois routes publiques ont répondu en HTTP 200 et l’ajout panier a reçu un retour visuel dans une session navigateur jetable.
-
-| Parcours simulé | TTFB | DOM prêt | Résultat |
-|---|---:|---:|---|
-| Marketplace | 3 831 ms | 6 227 ms | HTTP 200 |
-| Fiche restaurant | 1 791 ms | 4 675 ms | HTTP 200 |
-| Fiche produit | 780 ms | 2 809 ms | HTTP 200 |
-| Ajout panier isolé | — | — | Retour visible en 1 570 ms |
-
-Ces valeurs reflètent un seul profil simulé et la variabilité du staging. Elles ne sont ni une mesure téléphone réel, ni une validation de performance globale.
-
-## Recette finale exécutée
-
-| Contrôle | Résultat | Détail |
-|---|---:|---|
-| Syntaxe PHP du thème | Réussi | Tous les fichiers PHP du thème inspectés |
-| Syntaxe JavaScript des scripts de recette | Réussi | Route, palette et Lot 12 |
-| Contraste palettes | Réussi | Neuf couples nominaux validés par script |
-| Régression Chromium | Réussi | 24 contrôles : 6 routes × 4 breakpoints |
-| Régression Firefox | Réussi | 12 contrôles : canonique, legacy et 404 × 4 breakpoints |
-| Régression WebKit | Réussi | 12 contrôles : canonique, legacy et 404 × 4 breakpoints |
-| axe marketplace | Réussi | Aucune violation détectée |
-| axe fiche restaurant | Réussi après correctif 2.7.4 | Aucune violation détectée |
-| Archive 2.7.4 et distribution CSS | Réussi | Version et asset correctif vérifiés après purge |
-
-## Limites restantes et décisions attendues
-
-Le seul blocage récurrent est l’absence de variables ou de session vendeur explicitement autorisées. Cette contrainte a été respectée plutôt que contournée avec le compte de recette conservé. Les validations suivantes doivent être rejouées avec une session autorisée : tour et persistance, notifications réelles de commande, suivi de reçu, avis, signalement, chiffres d’analyse, palettes, ajout/modification produit, changement de statut et parcours clavier cockpit.
-
-La validation humaine du téléphone réel reste due. La décision de paiement reste due : aucun code de carte ou portefeuille ne doit être écrit avant validation métier et choix de passerelle. Enfin, l’objectif Performance ≥90 reste **non conforme à ce stade** ; le TTFB variable du staging est le principal signal observé et une série de mesures sur environnement représentatif reste nécessaire.
-
-| Décision / preuve attendue | Responsable attendu | Précondition |
+| Sujet | État | Condition de clôture |
 |---|---|---|
-| Recette vendeur complète | Exploitant habilité | Session vendeur explicitement autorisée |
-| Test téléphone réel | Responsable opérationnel | Appareil physique et réseau cible |
-| Décision paiement | Responsable métier | Pays, devise, encaissement, reversement et passerelle validés |
-| Rebudget performance | Équipe technique | Environnement représentatif et mesures répétées |
+| Performance ≥ 90 | Non conforme de façon reproductible sur le staging | Mesures répétées sur environnement représentatif avec budget de performance. |
+| Téléphone réel et lecteur d’écran natif | Non vérifiés dans cette passe | Recette humaine sur appareils et technologies d’assistance cibles. |
+| Paiement | Volontairement absent | Décision métier sur pays, devise, encaissement, reversement et passerelle. |
+| Lots 3 à 9 connectés | Preuves variables selon lot | Recettes métier ciblées sur données réelles autorisées. |
 
-## Documents associés
+Aucune transaction de paiement réelle n’a été initiée. Les archives de thème, captures brutes, nonces, cookies, identifiants et réponses réseau restent hors du dépôt public.
 
-Les preuves par lot sont regroupées dans `docs/receipts/lot-1-correction-report.md` à `docs/receipts/lot-12-report.md`. La campagne complémentaire est décrite dans `docs/receipts/verification-renforcee-report.md`. Le présent fichier est le rapport de synthèse unique ; les artefacts bruts restent exclus du dépôt public.
+## Références
+
+[1] [Rapport final Lot 1](lot-1-correction-report.md)
+[2] [Rapport final Lot 2](lot-2-correction-report.md)
+[3] [Recette publique renforcée](verification-renforcee-report.md)

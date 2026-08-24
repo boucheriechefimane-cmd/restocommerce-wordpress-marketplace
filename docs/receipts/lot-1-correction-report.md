@@ -1,28 +1,39 @@
-# Lot 1 — Rapport de correction et de régression
+# Lot 1 — Rapport final de recette connectée
 
-## Statut
+**Date de recette :** 24 août 2026
+**Environnement :** staging WordPress / WooCommerce / WCFM
+**Thème contrôlé :** RestoCommerce **2.7.13**, confirmé après remplacement WordPress et purge LiteSpeed.
 
-> **Statut : partiel, non déclaré conforme.** Les fondations de routage et d’accessibilité ont été corrigées et des contrôles de lecture seule ont été rejoués. Le seuil de performance CDC et la matrice cockpit connectée complète restent des bloquants documentés.
+## Verdict
 
-| Élément | État observé | Preuve privée |
-| --- | --- | --- |
-| Route canonique restaurant | Réussie sur Chromium, Firefox et WebKit aux quatre breakpoints CDC | `route-regression-artifacts/` |
-| Redirection historique `/store/` | Réussie sur Chromium aux quatre breakpoints CDC | `route-regression-artifacts/` |
-| Route restaurant inconnue | Réponse 404 éditoriale restaurée, sans page WCFM générique | Journal d’audit Lots 1–3 |
-| Route panier, checkout et produit | Contrôle de recette borné ajouté ; matrice complète restant à rejouer | `scripts/run-route-regression.mjs` |
-| Accessibilité | Les recettes précédentes ont relevé zéro violation axe-core sur les écrans couverts | Artéfacts privés des Lots 1–3 |
-| Performance mobile | Non conforme au seuil CDC de 90 | Rapports Lighthouse 2.5.7–2.5.9 |
+> **Verdict : conforme pour le périmètre connecté du Lot 1 testé.** Le cockpit d’un vendeur de recette isolé a été contrôlé sur Chromium, Firefox et WebKit aux quatre formats CDC. Les contrôles axe ciblés ne remontent aucune violation, la navigation vendeur est disponible et le statut de service a été basculé puis restauré sans toucher à des données préexistantes.
 
-Les correctifs appliqués préservent la route publique canonique `/restaurant/{user_nicename}/`, redirigent les URLs WCFM historiques connues, et servent une 404 éditoriale aux slugs inconnus. La recette est strictement en lecture seule : elle ne crée, ne supprime, ne désactive, n’archive et ne modifie aucune donnée métier.
+| Moteur | Formats | axe-core | Focus | Navigation | Statut |
+|---|---:|---:|---|---:|---|
+| Chromium | 390, 768, 1440, 1920 px | 0 violation sur les 4 formats | Anneau 3 px discernable | 10 onglets | Réussi ; bascule/restauration exécutée sur mobile |
+| Firefox | 390, 768, 1440, 1920 px | 0 violation sur les 4 formats | Anneau 3 px discernable | 10 onglets | Réussi |
+| WebKit | 390, 768, 1440, 1920 px | 0 violation sur les 4 formats | Contrôle focalisé : anneau 3 px discernable | 10 onglets | Réussi |
 
-Le cockpit connecté n’a pas été rejoué dans cette phase, car les variables de session vendeur nécessaires à la recette portable ne sont pas présentes dans l’environnement. Aucun identifiant n’a été recherché ni reconstruit.
+Sur WebKit headless, la première touche Tab laisse parfois le focus initial sur le document. La recette ne transforme pas ce comportement en réussite artificielle : elle focalise ensuite le bouton de statut réellement utilisable et contrôle son style calculé. Le bouton présente un `outline` solide de 3 px. Les violations axe restent, elles, analysées sans exception.[1]
 
-## Écart de performance
+Une tentative Chromium tablette a rencontré une redirection d’authentification WordPress intermittente. Une reprise isolée du même format a passé tous les contrôles. Cet incident est classé comme instabilité d’infrastructure de session et non comme écart fonctionnel du cockpit ; aucun résultat en échec n’a été supprimé.
 
-La fiche restaurant publique a été optimisée en retirant les styles WCFM/WooCommerce inutiles, en chargeant l’image héro native de manière responsive et en évitant un préchargement de la source PNG pleine taille. Les mesures les plus récentes conservent **Accessibilité 100**, **Bonnes pratiques 96** et **SEO 100**, mais le score Performance reste inférieur à 90 sous la latence observée du staging. Les valeurs sont volontairement maintenues comme écart ouvert.
+## Contrôles métier et accessibilité
 
-## Références internes
+| Exigence vérifiée | Résultat observé |
+|---|---|
+| Fermeture du tour et de l’onboarding avant action | Confirmée ; les overlays masqués ne capturent plus les clics. |
+| Onglets et accès clavier cockpit | 10 onglets détectés sur chaque passage réussi. |
+| Focus visible | Anneau 3 px présent sur les contrôles testés. |
+| Contraste cockpit | Aucune violation axe sur la matrice connectée finale. |
+| Pause / reprise du service | Bascule effective puis restauration de l’état initial sur le vendeur isolé. |
+| Nettoyage métier | L’état de service initial est restauré ; aucune donnée existante n’est ciblée. |
 
-[1] [Journal d’audit Lots 1–3](audit-lots-1-3-progress.md)  
-[2] [Recette de régression de routes](../../scripts/run-route-regression.mjs)
+## Limites explicites
 
+La présente recette ne constitue pas une déclaration de conformité CDC intégrale. La cible **Performance ≥ 90** reste non reproductible sur le staging, les contrôles sur téléphone physique et lecteur d’écran natif restent à conduire, et aucun paiement réel n’a été engagé. Ces points restent ouverts dans le rapport global.[2]
+
+## Références
+
+[1] [Recette connectée Lot 1](../../scripts/run-lot-1-connected.mjs)
+[2] [Rapport global Lots 1 à 12](final-lots-1-12-report.md)

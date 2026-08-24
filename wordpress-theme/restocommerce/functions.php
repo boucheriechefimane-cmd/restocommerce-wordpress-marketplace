@@ -14,7 +14,7 @@ function restocommerce_theme_setup() : void {
 }
 add_action( 'after_setup_theme', 'restocommerce_theme_setup' );
 
-function restocommerce_asset_version( string $relative_path ) : string { $path = get_template_directory() . $relative_path; return file_exists( $path ) ? (string) filemtime( $path ) : wp_get_theme()->get( 'Version' ); }
+function restocommerce_asset_version( string $relative_path ) : string { $path = get_template_directory() . $relative_path; $theme_version = (string) wp_get_theme()->get( 'Version' ); return file_exists( $path ) ? (string) filemtime( $path ) . '-' . $theme_version : $theme_version; }
 function restocommerce_cart_count() : int { return ( class_exists( 'WooCommerce' ) && WC()->cart ) ? (int) WC()->cart->get_cart_contents_count() : 0; }
 
 function restocommerce_enqueue_assets() : void {
@@ -317,6 +317,7 @@ function restocommerce_enqueue_vendor_dashboard_assets() : void {
 	wp_enqueue_style( 'restocommerce-vendor-reviews-dashboard', get_template_directory_uri() . '/assets/css/vendor-reviews.css', array( 'restocommerce-vendor-dashboard-app' ), restocommerce_asset_version( '/assets/css/vendor-reviews.css' ) );
 	wp_enqueue_style( 'restocommerce-vendor-insights', get_template_directory_uri() . '/assets/css/vendor-insights.css', array( 'restocommerce-vendor-dashboard-app' ), restocommerce_asset_version( '/assets/css/vendor-insights.css' ) );
 	wp_enqueue_style( 'restocommerce-vendor-palettes-dashboard', get_template_directory_uri() . '/assets/css/vendor-palettes.css', array( 'restocommerce-vendor-dashboard-app' ), restocommerce_asset_version( '/assets/css/vendor-palettes.css' ) );
+	wp_enqueue_style( 'restocommerce-vendor-accessibility-hotfix', get_template_directory_uri() . '/assets/css/vendor-accessibility-hotfix.css', array( 'restocommerce-vendor-palettes-dashboard' ), restocommerce_asset_version( '/assets/css/vendor-accessibility-hotfix.css' ) );
 	wp_enqueue_script( 'restocommerce-vendor-dashboard-app', get_template_directory_uri() . '/assets/js/vendor-dashboard-app.js', array(), restocommerce_asset_version( '/assets/js/vendor-dashboard-app.js' ), true );
 	wp_enqueue_script( 'restocommerce-vendor-product-wizard', get_template_directory_uri() . '/assets/js/vendor-product-wizard.js', array( 'restocommerce-vendor-dashboard-app' ), restocommerce_asset_version( '/assets/js/vendor-product-wizard.js' ), true );
 	wp_enqueue_script( 'restocommerce-vendor-onboarding', get_template_directory_uri() . '/assets/js/vendor-onboarding.js', array( 'restocommerce-vendor-dashboard-app', 'restocommerce-vendor-product-wizard' ), restocommerce_asset_version( '/assets/js/vendor-onboarding.js' ), true );

@@ -386,3 +386,13 @@
 - [x] Rejouer les routes publiques, axe, navigation clavier et rendus multi-moteurs sans session vendeur.
 - [x] Refaire les mesures de performance publique et le contrôle des palettes ; documenter chaque limite qui exige un compte vendeur ou un appareil physique.
 - [x] Produire un verdict de conformité factuel et ne corriger que les écarts sûrs ne modifiant aucune donnée métier.
+
+# Recette finale connectée Lots 1 et 2
+- [x] Vérifier l’avis externe, le SHA public actuel et les écarts réellement encore ouverts.
+- [x] Obtenir l’autorisation explicite de créer puis nettoyer uniquement les données de recette isolées.
+- [x] Créer un vendeur, des options et des produits identifiables uniquement comme données de recette ; supprimer le second vendeur vide utilisé pour l’isolation.
+- [x] Rejouer le cockpit Lot 1 sur Chromium, Firefox et WebKit aux quatre breakpoints, avec axe et clavier.
+- [x] Rejouer le wizard Lot 2 : création contrôlée, upload, options max 2, anti-double soumission, propriété/nonce, rendu public et nettoyage autorisé.
+- [x] Émettre un rapport final par lot avec les preuves et un verdict sans surdéclaration.
+
+> Recette connectée du 24 août 2026 : RestoCommerce 2.7.13 est vérifié sur staging. Lot 1 : matrice cockpit finale verte sur les trois moteurs et quatre formats, avec restauration service. Lot 2 : création, limitation UI/serveur, duplication, bibliothèque, rendu public, refus sans nonce, refus inter-vendeur, archivage et 404 public confirmés. Les performances reproductibles ≥90, le téléphone réel, le lecteur d’écran natif et la décision de paiement restent ouverts.

@@ -1,0 +1,15 @@
+/* Atelier du Service : correctif de contraste chargé après les styles du cockpit. */
+.rc-vendor-dashboard .rc-vendor-store-name{color:#36544b!important}
+.rc-vendor-dashboard .rc-vendor-header>div:first-child>p{color:#853725!important}
+.rc-vendor-dashboard .rc-vendor-tabs--sidebar>button:not(.is-active)>span,.rc-vendor-dashboard .rc-vendor-tabs--mobile>button:not(.is-active)>span{color:#285247!important}
+.rc-vendor-dashboard .rc-vendor-tabs--mobile>button:not(.is-active){background:#efe6d8!important}
+.rc-vendor-dashboard .rc-vendor-tabs--sidebar>button:not(.is-active)>span,.rc-vendor-dashboard .rc-vendor-tabs--mobile>button:not(.is-active)>span,.rc-vendor-dashboard .rc-vendor-store-name,.rc-vendor-dashboard .rc-vendor-header>div:first-child>p{font-weight:800!important}
+.rc-vendor-dashboard .rc-vendor-metric small,.rc-vendor-dashboard .rc-vendor-metric em{color:#36544b!important;font-weight:700!important}
+.rc-vendor-dashboard .rc-vendor-metric--featured small,.rc-vendor-dashboard .rc-vendor-metric--featured em{color:#fffaf0!important}
+.rc-vendor-dashboard .rc-vendor-help>a{color:#853725!important}
+.rc-vendor-dashboard .rc-vendor-return{color:#36544b!important}
+.rc-vendor-dashboard .rc-vendor-card>header>div>p,.rc-vendor-dashboard .rc-vendor-rhythm header p,.rc-vendor-dashboard .rc-vendor-latest header p{color:#853725!important}
+.rc-vendor-dashboard .rc-vendor-bars b{color:#36544b!important;font-weight:800!important}
+.rc-vendor-dashboard .rc-vendor-rhythm footer>span{color:#36544b!important;font-weight:700!important}
+.rc-vendor-dashboard button[data-rc-go="orders"]{color:#853725!important}
+.rc-vendor-dashboard :is(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid #853725!important;outline-offset:3px!important}
